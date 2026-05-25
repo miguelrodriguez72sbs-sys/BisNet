@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/pages/email.dart';
+import 'package:bisnet/pages/register.dart';
+import 'package:bisnet/pages/home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -103,7 +105,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterFormScreen(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6B962D),
                         shape: RoundedRectangleBorder(
@@ -120,7 +129,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
 
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Explore as guest',
                       style: TextStyle(color: Color(0xFF6B962D), fontSize: 16),

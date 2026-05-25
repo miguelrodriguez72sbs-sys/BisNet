@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:bisnet/pages/home.dart';
+import 'package:bisnet/pages/Terminos_y_condiciones.dart';
 
-class EmailScreen extends StatefulWidget {
-  const EmailScreen({super.key});
+class RegisterFormScreen extends StatefulWidget {
+  const RegisterFormScreen({super.key});
 
   @override
-  State<EmailScreen> createState() => _EmailScreenState();
+  State<RegisterFormScreen> createState() => _RegisterFormScreenState();
 }
 
-class _EmailScreenState extends State<EmailScreen> {
+class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController idController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -294,8 +296,16 @@ class _EmailScreenState extends State<EmailScreen> {
                                 debugPrint(idController.text);
                                 debugPrint(emailController.text);
                                 debugPrint(passwordController.text);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        TermsAndConditionsScreen(),
+                                  ),
+                                );
                               }
                             : null,
+
                         child: const Text(
                           'Register',
                           style: TextStyle(color: Colors.white, fontSize: 16),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bisnet/pages/register.dart';
+import 'package:bisnet/pages/home.dart';
 
 class LoginFormScreen extends StatefulWidget {
   const LoginFormScreen({super.key});
@@ -203,7 +203,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const EmailScreen(),
+                                  builder: (context) => HomeScreen(),
                                 ),
                               );
                             },
