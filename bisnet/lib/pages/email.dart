@@ -241,7 +241,14 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           width: double.infinity,
                           height: 52,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen(),
+                                ),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(
                                 color: Color(0xFF6B962D),
