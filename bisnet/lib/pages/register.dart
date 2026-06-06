@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:bisnet/pages/home.dart';
+import 'package:flutter/gestures.dart';
 import 'package:bisnet/pages/Terminos_y_condiciones.dart';
+import 'package:bisnet/pages/home.dart';
+import 'package:bisnet/services/auth_service.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   const RegisterFormScreen({super.key});
@@ -29,7 +31,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6B962D),
+      backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -62,7 +64,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: const Color(0xFF6B962D),
+                              color: const Color(0xFF488C61),
                               width: 2,
                             ),
                             color: Colors.white,
@@ -80,7 +82,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                           ),
                         ),
                       ],
@@ -95,7 +97,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         hintText: 'Name',
                         prefixIcon: const Icon(
                           Icons.person_outline,
-                          color: Color(0xFF6B962D),
+                          color: Color(0xFF488C61),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -103,14 +105,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 2,
                           ),
                         ),
@@ -129,7 +131,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         hintText: 'ID',
                         prefixIcon: const Icon(
                           Icons.badge_outlined,
-                          color: Color(0xFF6B962D),
+                          color: Color(0xFF488C61),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -137,14 +139,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 2,
                           ),
                         ),
@@ -163,7 +165,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         hintText: 'Email',
                         prefixIcon: const Icon(
                           Icons.email_outlined,
-                          color: Color(0xFF6B962D),
+                          color: Color(0xFF488C61),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -171,14 +173,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 2,
                           ),
                         ),
@@ -197,7 +199,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         hintText: 'Password',
                         prefixIcon: const Icon(
                           Icons.lock_outline,
-                          color: Color(0xFF6B962D),
+                          color: Color(0xFF488C61),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -205,14 +207,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
-                            color: Color(0xFF6B962D),
+                            color: Color(0xFF488C61),
                             width: 2,
                           ),
                         ),
@@ -232,7 +234,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           height: 24,
                           child: Checkbox(
                             value: _acceptedTerms,
-                            activeColor: const Color(0xFF6B962D),
+                            activeColor: const Color(0xFF488C61),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -253,20 +255,33 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                               });
                             },
                             child: RichText(
-                              text: const TextSpan(
-                                style: TextStyle(
+                              text: TextSpan(
+                                style: const TextStyle(
                                   fontSize: 13,
                                   color: Colors.black87,
                                 ),
+
                                 children: [
-                                  TextSpan(text: 'I accept the '),
+                                  const TextSpan(text: 'I accept the '),
+
                                   TextSpan(
                                     text: 'Terms and Conditions',
-                                    style: TextStyle(
-                                      color: Color(0xFF6B962D),
+                                    style: const TextStyle(
+                                      color: Color(0xFF488C61),
                                       fontWeight: FontWeight.w600,
                                       decoration: TextDecoration.underline,
                                     ),
+
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TermsAndConditionsScreen(),
+                                          ),
+                                        );
+                                      },
                                   ),
                                 ],
                               ),
@@ -284,25 +299,46 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B962D),
+                          backgroundColor: const Color(0xFF488C61),
                           disabledBackgroundColor: Colors.grey[400],
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         onPressed: _acceptedTerms
-                            ? () {
-                                debugPrint(nameController.text);
-                                debugPrint(idController.text);
-                                debugPrint(emailController.text);
-                                debugPrint(passwordController.text);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        TermsAndConditionsScreen(),
-                                  ),
-                                );
+                            ? () async {
+                                try {
+                                  final response = await AuthService.register(
+                                    name: nameController.text,
+                                    identification: idController.text,
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                  );
+
+                                  // Agrega este print para ver la respuesta
+                                  debugPrint('RESPUESTA: $response');
+
+                                  if (response.containsKey('token')) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomeScreen(),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(response.toString()),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  // Imprime el error exacto
+                                  debugPrint('ERROR: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error: $e')),
+                                  );
+                                }
                               }
                             : null,
 
@@ -320,7 +356,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       right: 0,
                       child: Center(
                         child: Image.asset(
-                          'assets/Lechuzas/Lechuza_1.png',
+                          'assets/Lechuzas/Lechuza_2.png',
                           height: 200,
                           fit: BoxFit.contain,
                         ),

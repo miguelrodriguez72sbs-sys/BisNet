@@ -14,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6B962D),
+      backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF6B962D),
+                      color: Color(0xFF488C61),
                       height: 1.1,
                     ),
                   ),
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 32),
 
                   Image.asset(
-                    'assets/Lechuzas/Lechuza_1.png',
+                    'assets/Lechuzas/Lechuza_3.png',
                     height: 260,
                     fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => const Icon(
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6B962D),
+                        backgroundColor: const Color(0xFF488C61),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6B962D),
+                        backgroundColor: const Color(0xFF488C61),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       'Explore as guest',
-                      style: TextStyle(color: Color(0xFF6B962D), fontSize: 16),
+                      style: TextStyle(color: Color(0xFF488C61), fontSize: 16),
                     ),
                   ),
                 ],

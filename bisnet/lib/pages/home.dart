@@ -3,6 +3,9 @@ import 'package:bisnet/widgets/search_bar.dart';
 import 'package:bisnet/widgets/notifications_bell.dart';
 import 'package:bisnet/pages/post.dart';
 import 'package:bisnet/pages/games.dart';
+import 'package:bisnet/pages/profile.dart';
+import 'package:bisnet/pages/estadias.dart';
+import 'package:bisnet/pages/home_feed.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,11 +18,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Center(child: Text('Home')),
-    const Center(child: Text('Stays')),
+    const HomeFeedScreen(),
+    const EstadiasScreen(),
     const PostScreen(),
     const GamesScreen(),
-    const Center(child: Text('Profile')),
+    const ProfileScreen(),
   ];
 
   @override
@@ -27,14 +30,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF6B962D),
+        backgroundColor: const Color(0xFF0D3C24),
         title: Row(
           children: [
             Image.asset('assets/Lechuzas/Logo.png', height: 40),
             const SizedBox(width: 12),
             const Text(
               'Bisnet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -49,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF6B962D),
+        selectedItemColor: const Color(0xFF488C61),
         unselectedItemColor: Colors.grey,
         onTap: (index) {
           setState(() {

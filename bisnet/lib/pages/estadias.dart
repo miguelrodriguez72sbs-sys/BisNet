@@ -1,164 +1,119 @@
 import 'package:flutter/material.dart';
+import 'package:bisnet/services/auth_service.dart';
 
-class EstadiasScreen extends StatelessWidget {
+class EstadiasScreen extends StatefulWidget {
   const EstadiasScreen({super.key});
 
   @override
+  State<EstadiasScreen> createState() => _EstadiasScreenState();
+}
+
+class _EstadiasScreenState extends State<EstadiasScreen> {
+  List<dynamic> _estadias = [];
+  bool _loading = true;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEstadias();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadEstadias({String? search}) async {
+    setState(() => _loading = true);
+    try {
+      final data = await AuthService.getEstadias(search: search);
+      setState(() {
+        _estadias = data;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() => _loading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Fondo crema suave de la aplicación
-      backgroundColor: const Color(0xFFF9F9F4),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 1. BARRA SUPERIOR (Custom AppBar)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF6B962D), // Verde principal
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
+    return Column(
+      children: [
+        // Barra de búsqueda
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search a company...',
+              prefixIcon: const Icon(Icons.search, color: Color(0xFF488C61)),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _searchController.clear();
+                  _loadEstadias();
+                },
               ),
-              child: Row(
-                children: [
-                  // Mini logo de la lechuza
-                  Image.asset(
-                    'assets/Lechuzas/Logo.png',
-                    height: 40,
-                    width: 40,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.account_circle, color: Colors.white, size: 40),
-                  ),
-                  // Título de la app
-                  const Text(
-                    'BISNET',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const Spacer(),
-                  // Icono de Notificación
-                  Image.asset(
-                    'assets/Iconos_movil/Notificacion.png',
-                    height: 24,
-                    width: 24,
-                    color: Colors.white,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.notifications, color: Colors.white),
-                  ),
-                  const SizedBox(width: 12),
-                  // Barra de búsqueda simulada
-                  Container(
-                    width: 90,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 6),
-                        child: Icon(Icons.search, color: Colors.white, size: 18),
-                      ),
-                    ),
-                  ),
-                ],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
               ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: const BorderSide(
+                  color: Color(0xFF488C61),
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: const BorderSide(
+                  color: Color(0xFF488C61),
+                  width: 2,
+                ),
+              ),
+              filled: true,
+              fillColor: Colors.white,
             ),
-
-            // 2. LISTA DE TARJETAS DE ESTADÍAS (Scrollable)
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: const [
-                  EstadiaCard(),
-                  EstadiaCard(),
-                  EstadiaCard(),
-                  SizedBox(height: 12), // Espacio al final de la lista
-                ],
-              ),
-            ),
-
-            // 3. BARRA DE NAVEGACIÓN INFERIOR (Custom Bottom Bar) - CORREGIDA
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF6B962D), // Verde principal
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  // Icono Home
-                  Image.asset(
-                    'assets/Iconos_movil/home.png',
-                    height: 32,
-                    width: 32,
-                    color: Colors.white,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.home, color: Colors.white, size: 32),
-                  ),
-                  // Icono Estadías
-                  Image.asset(
-                    'assets/Iconos_movil/Estadias seleccionadas.png',
-                    height: 32,
-                    width: 32,
-                    color: Colors.white,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.business, color: Colors.white, size: 32),
-                  ),
-                  // Icono Publicar (+)
-                  Image.asset(
-                    'assets/Iconos_movil/Publicar.png',
-                    height: 32,
-                    width: 32,
-                    color: Colors.white,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.add_circle_outline, color: Colors.white, size: 32),
-                  ),
-                  // Icono Juegos
-                  Image.asset(
-                    'assets/Iconos_movil/Juegos.png',
-                    height: 32,
-                    width: 32,
-                    color: Colors.white,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.sports_esports, color: Colors.white, size: 32),
-                  ),
-                  // Icono Usuario / Perfil
-                  Image.asset(
-                    'assets/Iconos_movil/usuario.png',
-                    height: 32,
-                    width: 32,
-                    color: Colors.white,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.white, size: 32),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            onSubmitted: (value) => _loadEstadias(search: value),
+          ),
         ),
-      ),
+
+        // Lista de estadías
+        Expanded(
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : _estadias.isEmpty
+              ? const Center(
+                  child: Text(
+                    'Not found any companies',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: () => _loadEstadias(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _estadias.length,
+                    itemBuilder: (context, index) {
+                      final estadia = _estadias[index];
+                      return EstadiaCard(estadia: estadia);
+                    },
+                  ),
+                ),
+        ),
+      ],
     );
   }
 }
 
 // Widget personalizado para las Tarjetas de Empresa
 class EstadiaCard extends StatelessWidget {
-  const EstadiaCard({super.key});
+  final Map<String, dynamic> estadia;
+
+  const EstadiaCard({super.key, required this.estadia});
 
   @override
   Widget build(BuildContext context) {
@@ -166,68 +121,101 @@ class EstadiaCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFD9D9D9), // Gris claro del fondo de la tarjeta
+        color: const Color(0xFFD9D9D9),
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Encabezado: Icono de usuario y Nombre de la Empresa
           Row(
             children: [
-              const Icon(Icons.person, color: Colors.black, size: 32),
+              const Icon(Icons.business, color: Colors.black, size: 32),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Company',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      estadia['empresa'] ?? 'Sin nombre',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Carrer',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
+                    Text(
+                      estadia['carrera'] ?? 'No career',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // Etiqueta de Descripción
-          const Text(
-            'Description',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          const SizedBox(height: 12),
+          Text(
+            estadia['giro'] ?? 'No description',
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
           ),
-          const SizedBox(height: 20),
-          // Botón "See details"
+          const SizedBox(height: 16),
           Center(
             child: SizedBox(
               width: 180,
               height: 40,
               child: ElevatedButton(
                 onPressed: () {
-                  // Acción para ver detalles en el futuro
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(estadia['empresa'] ?? ''),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _detailRow(Icons.work, 'Giro', estadia['giro']),
+                          _detailRow(
+                            Icons.person,
+                            'Contacto',
+                            estadia['contacto'],
+                          ),
+                          _detailRow(Icons.email, 'Correo', estadia['correo']),
+                          _detailRow(
+                            Icons.phone,
+                            'Teléfono',
+                            estadia['telefono'],
+                          ),
+                          _detailRow(
+                            Icons.location_on,
+                            'Dirección',
+                            estadia['direccion'],
+                          ),
+                          _detailRow(
+                            Icons.school,
+                            'Carrera',
+                            estadia['carrera'],
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cerrar',
+                            style: TextStyle(color: Color(0xFF488C61)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6B962D), // Verde oliva del botón
+                  backgroundColor: const Color(0xFF488C61),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -242,6 +230,37 @@ class EstadiaCard extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailRow(IconData icon, String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: const Color(0xFF488C61)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+                Text(
+                  value ?? 'Not available',
+                  style: const TextStyle(fontSize: 13),
+                ),
+              ],
             ),
           ),
         ],

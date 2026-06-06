@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/pages/home.dart';
+import 'package:bisnet/services/auth_service.dart';
+import 'package:flutter/foundation.dart';
 
 class LoginFormScreen extends StatefulWidget {
   const LoginFormScreen({super.key});
@@ -22,7 +24,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6B962D),
+      backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -62,7 +64,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: const Color(0xFF6B962D),
+                                  color: const Color(0xFF488C61),
                                   width: 2,
                                 ),
                                 color: Colors.white,
@@ -121,7 +123,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           decoration: InputDecoration(
                             prefixIcon: const Icon(
                               Icons.email_outlined,
-                              color: Color(0xFF6B962D),
+                              color: Color(0xFF488C61),
                             ),
                             hintText: 'E-mail',
                             hintStyle: const TextStyle(
@@ -130,20 +132,20 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 width: 1.5,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 width: 2,
                               ),
                             ),
@@ -161,7 +163,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           decoration: InputDecoration(
                             prefixIcon: const Icon(
                               Icons.lock_outline,
-                              color: Color(0xFF6B962D),
+                              color: Color(0xFF488C61),
                             ),
                             hintText: 'Password',
                             hintStyle: const TextStyle(
@@ -170,20 +172,20 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 width: 1.5,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 width: 2,
                               ),
                             ),
@@ -199,16 +201,42 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           width: double.infinity,
                           height: 52,
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
+                            onPressed: () async {
+                              try {
+                                final response = await AuthService.login(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                );
+
+                                debugPrint('Answer: $response');
+
+                                if (response.containsKey('token')) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomeScreen(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        response['message'] ??
+                                            'Incorrect credentials',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                debugPrint('ERROR: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e')),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6B962D),
+                              backgroundColor: const Color(0xFF488C61),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -251,7 +279,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                             },
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 width: 1.5,
                               ),
                               shape: RoundedRectangleBorder(
@@ -261,7 +289,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                             child: const Text(
                               'Explore as guest',
                               style: TextStyle(
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -280,7 +308,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                     right: 0,
                     child: Center(
                       child: Image.asset(
-                        'assets/Lechuzas/Lechuza_1.png',
+                        'assets/Lechuzas/Lechuza_3.png',
                         height: 200,
                         fit: BoxFit.contain,
                       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:bisnet/services/auth_service.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
@@ -46,7 +47,7 @@ class _PostScreenState extends State<PostScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.videocam),
-              title: const Text('Galería - Video'),
+              title: const Text('Gallery - Video'),
               onTap: () {
                 Navigator.pop(context);
                 _pickMedia(ImageSource.gallery, true);
@@ -115,7 +116,7 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Toca para agregar imagen o video',
+                          'Tap to add image or video',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -130,7 +131,7 @@ class _PostScreenState extends State<PostScreen> {
             controller: _descController,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: 'Escribe una descripción...',
+              hintText: 'Write a description...',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -143,7 +144,7 @@ class _PostScreenState extends State<PostScreen> {
           TextField(
             controller: _tagsController,
             decoration: InputDecoration(
-              hintText: '#tags separados por espacio',
+              hintText: '#tags separated by spaces',
               prefixIcon: const Icon(Icons.tag),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -158,11 +159,52 @@ class _PostScreenState extends State<PostScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: () {
-                // TODO: enviar al backend
+              onPressed: () async {
+                if (_descController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Add a description')),
+                  );
+                  return;
+                }
+
+                try {
+                  final response = await AuthService.createPost(
+                    title: _tagsController.text.isNotEmpty
+                        ? _tagsController.text
+                        : 'Sin título',
+                    description: _descController.text,
+                    mediaFile: _mediaFile,
+                  );
+
+                  if (response.containsKey('post')) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Post created successfully'),
+                      ),
+                    );
+                    // Limpiar campos
+                    setState(() {
+                      _descController.clear();
+                      _tagsController.clear();
+                      _mediaFile = null;
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          response['message'] ?? 'Error creating post',
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6B962D),
+                backgroundColor: const Color(0xFF488C61),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
