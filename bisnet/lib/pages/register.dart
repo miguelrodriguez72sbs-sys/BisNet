@@ -17,7 +17,12 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  bool _acceptedTerms = false; // estado del checkbox
+  bool _acceptedTerms = false;
+
+  // ← método aquí dentro de la clase State, no en StatefulWidget
+  bool _esCorreoInstitucional(String email) {
+    return email.toLowerCase().endsWith('@utbispuebla.edu.mx');
+  }
 
   @override
   void dispose() {
@@ -162,7 +167,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        hintText: 'Email',
+                        hintText: 'Email institucional (@utbispuebla.edu.mx)',
                         prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: Color(0xFF488C61),
@@ -248,7 +253,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: GestureDetector(
-                            // Tocar el texto también activa el checkbox
                             onTap: () {
                               setState(() {
                                 _acceptedTerms = !_acceptedTerms;
@@ -260,10 +264,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                   fontSize: 13,
                                   color: Colors.black87,
                                 ),
-
                                 children: [
                                   const TextSpan(text: 'I accept the '),
-
                                   TextSpan(
                                     text: 'Terms and Conditions',
                                     style: const TextStyle(
@@ -271,7 +273,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                       fontWeight: FontWeight.w600,
                                       decoration: TextDecoration.underline,
                                     ),
-
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
                                         Navigator.push(
@@ -293,7 +294,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
 
                     const SizedBox(height: 20),
 
-                    // === BOTÓN REGISTER — deshabilitado si no acepta términos ===
+                    // === BOTÓN REGISTER ===
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -307,6 +308,20 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         ),
                         onPressed: _acceptedTerms
                             ? () async {
+                                // ← validación ANTES de llamar al backend
+                                if (!_esCorreoInstitucional(
+                                  emailController.text,
+                                )) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Solo se permiten correos institucionales (@utbispuebla.edu.mx)',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
                                 try {
                                   final response = await AuthService.register(
                                     name: nameController.text,
@@ -315,7 +330,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                     password: passwordController.text,
                                   );
 
-                                  // Agrega este print para ver la respuesta
                                   debugPrint('RESPUESTA: $response');
 
                                   if (response.containsKey('token')) {
@@ -333,7 +347,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                     );
                                   }
                                 } catch (e) {
-                                  // Imprime el error exacto
                                   debugPrint('ERROR: $e');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text('Error: $e')),
@@ -341,7 +354,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                 }
                               }
                             : null,
-
                         child: const Text(
                           'Register',
                           style: TextStyle(color: Colors.white, fontSize: 16),
@@ -349,17 +361,12 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       ),
                     ),
 
-                    // === MASCOTA — asomándose desde abajo del card ===
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Center(
-                        child: Image.asset(
-                          'assets/Lechuzas/Lechuza_2.png',
-                          height: 200,
-                          fit: BoxFit.contain,
-                        ),
+                    // === MASCOTA ===
+                    Center(
+                      child: Image.asset(
+                        'assets/Lechuzas/Lechuza_2.png',
+                        height: 200,
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ],

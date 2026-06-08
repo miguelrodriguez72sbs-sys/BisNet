@@ -6,7 +6,7 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://aa9c08382a2b0d.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://7b0b6c8c12fbc7.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
 
   // Guarda el token
   static Future<void> saveToken(String token) async {

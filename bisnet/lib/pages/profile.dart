@@ -95,24 +95,33 @@ class UserInfoCard extends StatelessWidget {
             children: [
               const Icon(Icons.person, color: Colors.black, size: 36),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user?['name'] ?? 'Name',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user?['name'] ?? 'Name',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  ),
-                  Text(
-                    user?['career'] ?? 'Career',
-                    style: const TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                ],
+                    Text(
+                      user?['career'] ?? 'Career',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Row(
                 children: [
                   GestureDetector(

@@ -6,6 +6,7 @@ import 'package:bisnet/pages/games.dart';
 import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
+import 'package:bisnet/services/auth_service.dart'; // ← agrega este
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,14 +52,24 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 8),
         ],
       ),
-
       body: _pages[_currentIndex],
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: const Color(0xFF488C61),
         unselectedItemColor: Colors.grey,
-        onTap: (index) {
+        onTap: (index) async {
+          // ← solo un onTap
+          if (index == 1) {
+            final token = await AuthService.getToken();
+            if (token == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Debes iniciar sesión para ver las estadías'),
+                ),
+              );
+              return;
+            }
+          }
           setState(() {
             _currentIndex = index;
           });

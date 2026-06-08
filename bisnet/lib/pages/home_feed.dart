@@ -100,62 +100,65 @@ class PostCard extends StatelessWidget {
             children: [
               const Icon(Icons.person, color: Colors.black, size: 32),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post['user']?['name'] ?? 'Usuario',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    post['created_at']?.substring(0, 10) ?? '',
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              if (currentUser != null &&
-                  (currentUser!['id'] == post['user_id'] ||
-                      currentUser!['role'] == 'admin'))
-                GestureDetector(
-                  onTap: () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Eliminar publicación'),
-                        content: const Text('¿Estás seguro?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancelar'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: const Text(
-                              'Eliminar',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post['user']?['name'] ?? 'Usuario',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                    );
-                    if (confirm == true) onDelete();
-                  },
-                  child: Image.asset(
-                    'assets/Iconos compartidos/basura.png',
-                    height: 24,
-                    width: 24,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.delete, color: Colors.black),
-                  ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    Text(
+                      post['created_at']?.substring(0, 10) ?? '',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Delete Post'),
+                      content: const Text('Are you sure?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirm == true) onDelete();
+                },
+                child: Image.asset(
+                  'assets/Iconos compartidos/basura.png',
+                  height: 24,
+                  width: 24,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.delete, color: Colors.black),
+                ),
+              ),
             ],
           ),
-
           const SizedBox(height: 14),
 
           Text(
