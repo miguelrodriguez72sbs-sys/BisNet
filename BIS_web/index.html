@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bisnet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- BOTÓN GLOBAL DE IDIOMA -->
+    <div class="lang-switch-global" onclick="toggleLanguage()">EN / ES</div>
+
+    <!-- PANTALLAS DE AUTENTICACIÓN -->
+    <div id="auth-container">
+        
+        <!-- VISTA 1: WELCOME TO BISNET -->
+        <div id="card-welcome" class="auth-screen active">
+            <div class="mascot-side">
+                <div class="circle-decor cd1"></div>
+                <div class="circle-decor cd2"></div>
+                <img src="Lechuzas\owl.png" class="mascot-img-fluid" alt="mascota">
+            </div>
+            <div class="form-side">
+                <h1 class="auth-title" data-es="Welcome to BISNET" data-en="Welcome to BISNET">Welcome to BISNET</h1>
+                <p class="auth-subtitle" 
+                   data-es="Conecta con tu comunidad universitaria, comparte tus mejores proyectos y descubre oportunidades." 
+                   data-en="Connect with your university community, share your best projects and discover opportunities.">
+                   Conecta con tu comunidad universitaria, comparte tus mejores proyectos y descubre oportunidades.
+                </p>
+                <div class="auth-buttons-group">
+                    <button class="btn btn-primary" onclick="showCard('card-login')" data-es="Log In" data-en="Log In">Log In</button>
+                    <button class="btn btn-secondary" onclick="showCard('card-register')" data-es="Register" data-en="Register">Register</button>
+                </div>
+                <div class="guest-link-container">
+                    <span class="guest-accent-line">or</span>
+                    <span class="guest-clickable" onclick="loginAsGuest()" data-es="Explore as guest" data-en="Explore as guest">Explore as guest</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 2: INICIO DE SESIÓN -->
+        <div id="card-login" class="auth-screen">
+            <div class="mascot-side">
+                <div class="circle-decor cd1"></div>
+                <img src="Lechuzas\owl.png" class="mascot-img-fluid" alt="mascota">
+            </div>
+            <div class="form-side">
+                <h1 class="auth-title">BISNET</h1>
+                <div class="form-group">
+                    <label data-es="ID / Correo" data-en="ID / Email">ID / Correo</label>
+                    <input type="email" id="log-email" placeholder="E-mail">
+                </div>
+                <div class="form-group">
+                    <label data-es="Password" data-en="Password">Password</label>
+                    <input type="password" id="log-pass" placeholder="••••••••">
+                </div>
+                <div class="auth-buttons-group">
+                    <button class="btn btn-primary" onclick="executeLogin()" data-es="Log In" data-en="Log In">Log In</button>
+                    <button class="btn btn-secondary" onclick="showCard('card-welcome')" data-es="Atrás" data-en="Back">Atrás</button>
+                </div>
+                <div class="guest-link-container">
+                    <span class="guest-accent-line">or</span>
+                    <span class="guest-clickable" onclick="loginAsGuest()" data-es="Explore as guest" data-en="Explore as guest">Explore as guest</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 3: REGISTRO DE USUARIO -->
+        <div id="card-register" class="auth-screen">
+            <div class="mascot-side">
+                <div class="circle-decor cd1"></div>
+                <img src="Lechuzas\owl.png" class="mascot-img-fluid" alt="mascota">
+            </div>
+            <div class="form-side">
+                <h1 class="auth-title">BISNET</h1>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label data-es="Name" data-en="Name">Name</label>
+                        <input type="text" id="reg-name" placeholder="nombre">
+                    </div>
+                    <div class="form-group">
+                        <label data-es="Carrera" data-en="Career">Carrera</label>
+                        <input type="text" id="reg-career" placeholder=" ">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-es="E-mail" data-en="E-mail">E-mail</label>
+                    <input type="email" id="reg-email" placeholder="E-mail">
+                </div>
+                <div class="form-group">
+                    <label data-es="Password" data-en="Password">Password</label>
+                    <input type="password" id="reg-pass" placeholder="Crea una contraseña">
+                </div>
+                <div class="form-group-checkbox">
+                    <input type="checkbox" id="accept-terms">
+                    <label for="accept-terms">
+                        <span data-es="Acepto los " data-en="I accept the ">Acepto los </span>
+                        <a href="#" onclick="showCard('card-terms')" style="color: var(--primary-dark); font-weight: bold;" data-es="Términos y condiciones" data-en="Terms and conditions">Términos y condiciones</a>
+                    </label>
+                </div>
+                <div class="auth-buttons-group">
+                    <button class="btn btn-primary" onclick="executeRegister()" data-es="Register" data-en="Register">Register</button>
+                    <button class="btn btn-secondary" onclick="showCard('card-welcome')" data-es="Atrás" data-en="Back">Atrás</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 4: TÉRMINOS Y CONDICIONES -->
+        <div id="card-terms" class="auth-screen">
+            <div class="mascot-side">
+                <div class="circle-decor cd1"></div>
+                <img src="Lechuzas\owl.png" class="mascot-img-fluid" alt="mascota">
+            </div>
+            <div class="form-side">
+                <h1 class="auth-title">BISNET</h1>
+                <h3 style="margin-bottom: 10px;" data-es="Terms and conditions" data-en="Terms and conditions">Terms and conditions</h3>
+                <div class="terms-scroll-box">
+                <p>We recommend that you read the following content carefully before using the application.</p>
+                <p> <b>1. PURPOSE OF THE PLATFORM</b> The platform is intended to 
+                    provide a university digital space where users can share 
+                    academic projects, post images and videos related to student activities, 
+                    interact through reactions (“likes”), access information about study abroad 
+                    programs and professional opportunities, and foster collaboration and interaction 
+                    among students. </p>
+                <p><b>2. USER REGISTRATION</b> To use certain features of the platform, the 
+                    user must register by providing valid and up-to-date information. Each user 
+                    is responsible for maintaining the confidentiality of their account and password, 
+                    as well as for all activities carried out through it. The administration may suspend
+                     accounts containing false information, suspicious activity, or violations of 
+                     established rules.</p> 
+                <p><b>3. PUBLISHED CONTENT</b> Users may share images, videos, academic 
+                     projects, and content related to university activities. The user guarantees that 
+                     the published content is their own work or has the appropriate authorization, and 
+                     that it does not infringe on copyrights, legal regulations, or the rights of third 
+                     parties.</p>
+                <p><b>4. USER CONDUCT</b> It is strictly prohibited to post content that is offensive, 
+                    discriminatory, violent, sexual, defamatory, or unrelated to the academic environment.
+                     Furthermore, impersonation, manipulation of information, attempts to compromise 
+                     system security, and any use of the platform for illegal purposes are prohibited.</p> 
+                <p><b>5. INTERACTIONS</b> Users may interact with posts by reacting to them (“likes”).
+                     The platform does not guarantee that all posts will receive interaction, visibility,
+                      or a specific reach within the community.</p>
+                <p><b> 6. INTERNSHIPS AND CAREER OPPORTUNITIES</b> The internships section is intended 
+                    to share information related to companies, job openings, and career opportunities. 
+                    The platform does not guarantee hiring, acceptance, or the permanent availability 
+                    of job openings; therefore, each user is responsible for verifying the authenticity 
+                    and validity of the information provided. </p>
+                <p><b>7. PRIVACY AND PERSONAL DATA</b> The information provided by users will be used 
+                    solely for the operation of the platform. Personal and academic data will be treated 
+                    confidentially and will not be shared with third parties without authorization, except 
+                    in cases required by law.</p>
+                <p><b>8. INTELLECTUAL PROPERTY</b> The platform’s design, logo, structure, and visual 
+                    elements are part of the project and are protected under applicable intellectual 
+                    property laws. Users retain the rights to the content they publish.</p> 
+                <p><b>9. SUSPENSION OR DELETION OF ACCOUNTS</b> The administration may suspend or delete
+                    accounts and posts that violate these Terms and Conditions, as well as restrict 
+                    access to users who interfere with the proper functioning of the platform or the 
+                    safety of the community. 
+                <p><b>10. MODIFICATIONS</b> The platform may modify these Terms and Conditions at any time 
+                    in order to improve its operation, security, and the services offered. Modifications 
+                    will take effect once published within the application.</p> 
+                <p><b>11. ACCEPTANCE</b> By registering and using the platform, the user declares that 
+                    they have read, understood, and accepted these Terms and Conditions of Use.</p>
+
+                </div>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="acceptTermsFromView()" data-es="Accept" data-en="Accept">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL DE LA APLICACIÓN -->
+    <div id="app-container" style="display:none;">
+        
+        <!-- SIDEBAR FIJA IZQUIERDA -->
+        <aside class="sidebar">
+            <div>
+                <div class="brand">BISNET</div>
+                <div class="menu-items">
+                    <div class="menu-item active" onclick="switchView('view-home', this)" data-view="view-home">
+                        <span data-es=" Inicio" data-en=" Home"> Inicio</span>
+                    </div>
+                    <div class="menu-item" onclick="switchView('view-profile', this)" data-view="view-profile">
+                        <span data-es=" Perfil" data-en=" Profile"> Perfil</span>
+                    </div>
+                    <div class="menu-item" onclick="switchView('view-publish', this)" data-view="view-publish">
+                        <span data-es=" Publicar" data-en=" Post"> Publicar</span>
+                    </div>
+                    <div class="menu-item" onclick="switchView('view-jobs', this)" data-view="view-jobs">
+                        <span data-es=" Estadías" data-en=" Internships"> Estadías</span>
+                    </div>
+                    <div class="menu-item" onclick="switchView('view-games', this)" data-view="view-games">
+                        <span data-es=" Juegos" data-en=" Games"> Juegos</span>
+                    </div>
+                    <div class="menu-item" onclick="switchView('view-notifications', this)" data-view="view-notifications">
+                        <span data-es=" Notificaciones" data-en=" Notifications"> Notificaciones</span>
+                        <span class="notif-badge" id="notif-count">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-item" onclick="logout()" style="background-color: rgba(244,67,54,0.2); border-radius: 4px;">
+                <span data-es=" Salir" data-en=" Logout"> Salir</span>
+            </div>
+        </aside>
+
+        <!-- ÁREA DE CONTENIDO DINÁMICO -->
+        <main class="main-content">
+            <div class="top-navbar">
+                <div id="user-display-status" style="font-weight: bold;"></div>
+                <div style="color: #777; font-size: 14px;" id="date-indicator"></div>
+            </div>
+
+            <!-- SECCIÓN 1: FEED PRINCIPAL -->
+            <div id="view-home" class="view-section active">
+                <div class="feed-container" id="news-feed"></div>
+            </div>
+
+            <!-- SECCIÓN 2: PERFIL EDITABLE -->
+            <div id="view-profile" class="view-section">
+                <div class="feed-container profile-box">
+                    <h3 style="margin-bottom:20px;" data-es="Mi Perfil" data-en="My Profile">Mi Perfil</h3>
+                    <div class="profile-header-edit">
+                        <img id="profile-preview-img" class="avatar" src="" style="width:100px; height:100px; background-color:#ccc;">
+                        <div style="flex-grow:1;">
+                            <label data-es="Foto Perfil" data-en="Profile Picture">Foto Perfil</label>
+                            <input type="text" id="edit-avatar" style="width:100%; padding:8px; margin-top:5px;" onchange="document.getElementById('profile-preview-img').src=this.value">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-es="Nombre" data-en="Name">Nombre</label>
+                        <input type="text" id="edit-name">
+                    </div>
+                    <div class="form-group">
+                        <label data-es="Carrera" data-en="Career">Carrera</label>
+                        <input type="text" id="edit-career">
+                    </div>
+                    <div class="form-group">
+                        <label data-es="Descripción / Biografía" data-en="Description / Bio">Descripción / Biografía</label>
+                        <textarea id="edit-bio" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveProfile()" data-es="Guardar Cambios" data-en="Save Changes">Guardar Cambios</button>
+
+                    <h4 style="margin-top:40px; margin-bottom:15px;" data-es="Mis Publicaciones Realizadas" data-en="My Posts">Mis Publicaciones Realizadas</h4>
+                    <div id="my-posts-container"></div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: PUBLICAR PROYECTO -->
+            <div id="view-publish" class="view-section">
+                <div class="feed-container form-publish-box">
+                    <h3 style="margin-bottom:20px;" data-es="Publicar Nuevo Proyecto" data-en="Publish New Project">Publicar Nuevo Proyecto</h3>
+                    <div class="form-group">
+                        <label data-es="Descripción del Proyecto" data-en="Project Description">Descripción del Proyecto</label>
+                        <textarea id="post-desc" rows="4" placeholder="¿De qué trata tu proyecto escolar o personal?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-es="Hashtags (#)" data-en="Hashtags (#)">Hashtags (#)</label>
+                        <input type="text" id="post-tags" placeholder="#UTBIS">
+                    </div>
+                    <div class="form-group">
+                        <label data-es="Imagen" data-en="Image">Imagen</label>
+                        <input type="text" id="post-img" placeholder="Imagen">
+                    </div>
+                    <div class="form-group">
+                        <label data-es="video" data-en="Video"> Video</label>
+                        <input type="text" id="post-video" placeholder="video">
+                    </div>
+                    <button class="btn btn-accent publish-btn" onclick="createNewPost()" data-es=" Publicar Proyecto Ahora" data-en=" Publish Project Now"> Publicar Proyecto Ahora</button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 4: ESTADÍAS -->
+            <div id="view-jobs" class="view-section">
+                <div id="guest-block-jobs" class="guest-placeholder" data-es=" Como invitado no puedes ver la información detallada de las estadías universitarias." data-en=" As a guest you cannot view detailed internship information.">
+                     Como invitado no puedes ver la información detallada de las estadías universitarias.
+                </div>
+                <h3 style="margin-bottom:20px;" data-es="Bolsa de Estadías" data-en="Internship Center">Bolsa de Estadías</h3>
+                <div class="companies-grid" id="companies-container"></div>
+            </div>
+
+            <!-- SECCIÓN 5: JUEGOS EDUCATIVOS -->
+            <div id="view-games" class="view-section">
+                <div id="guest-block-games" class="guest-placeholder" data-es=" Como invitado no tienes acceso al módulo de juegos educativos." data-en=" As a guest you do not have access to the educational games module.">
+                     Como invitado no tienes acceso al módulo de juegos educativos.
+                </div>
+                <div class="games-box">
+                    <h2 style="color:var(--primary-dark)"> Módulo no disponible</h2>
+                    <p style="margin:20px 0; color:#666;" data-es="Juegos" data-en="Games">Juegos</p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 6: NOTIFICACIONES -->
+            <div id="view-notifications" class="view-section">
+                <div class="feed-container notifications-box">
+                    <h3 style="margin-bottom:20px;" data-es="Notificaciones de Interacción" data-en="Interaction Notifications">Notificaciones de Interacción</h3>
+                    <div id="notif-list" style="display:flex; flex-direction:column; gap:15px;"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE EMPRESAS -->
+    <div class="modal" id="details-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 id="modal-company-title" style="margin-bottom:15px; color:var(--primary-dark)"></h3>
+            <p><b>informacion</b> Informacion</p>
+            <br>
+            <p><b>Contacto institucional:</b> contacto</p>
+            <br>
+            <button class="btn btn-primary" onclick="closeModal()" style="width:100%">Ok</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
