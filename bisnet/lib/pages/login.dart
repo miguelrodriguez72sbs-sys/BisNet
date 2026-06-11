@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/pages/email.dart';
 import 'package:bisnet/pages/register.dart';
 import 'package:bisnet/pages/home.dart';
+import 'package:bisnet/pages/traductor.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -139,6 +140,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       'Explore as guest',
+                      style: TextStyle(color: Color(0xFF488C61), fontSize: 16),
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TraductorScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Traductor',
                       style: TextStyle(color: Color(0xFF488C61), fontSize: 16),
                     ),
                   ),

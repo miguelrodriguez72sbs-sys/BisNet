@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/pages/home.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class LoginFormScreen extends StatefulWidget {
   const LoginFormScreen({super.key});
@@ -23,6 +24,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(

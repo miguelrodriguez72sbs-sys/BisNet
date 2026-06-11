@@ -6,7 +6,7 @@ import 'package:bisnet/pages/games.dart';
 import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
-import 'package:bisnet/services/auth_service.dart'; // ← agrega este
+import 'package:bisnet/services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,18 +58,18 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: const Color(0xFF488C61),
         unselectedItemColor: Colors.grey,
         onTap: (index) async {
-          // ← solo un onTap
-          if (index == 1) {
-            final token = await AuthService.getToken();
-            if (token == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Debes iniciar sesión para ver las estadías'),
-                ),
-              );
-              return;
-            }
+          final token = await AuthService.getToken();
+
+          // Guest solo puede usar Home y Games
+          if (token == null && [1, 2, 4].contains(index)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('You must be logged in to access this section.'),
+              ),
+            );
+            return;
           }
+
           setState(() {
             _currentIndex = index;
           });

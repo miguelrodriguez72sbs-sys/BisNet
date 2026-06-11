@@ -23,12 +23,14 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     try {
       final posts = await AuthService.getPosts();
       final user = await AuthService.getCurrentUser();
+      if (!mounted) return; // 👈 agrega esto
       setState(() {
         _posts = posts;
         _currentUser = user;
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -125,38 +127,39 @@ class PostCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Delete Post'),
-                      content: const Text('Are you sure?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: const Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.red),
+              if (currentUser != null && post['user_id'] == currentUser!['id'])
+                GestureDetector(
+                  onTap: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Delete Post'),
+                        content: const Text('Are you sure?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancel'),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) onDelete();
-                },
-                child: Image.asset(
-                  'assets/Iconos compartidos/basura.png',
-                  height: 24,
-                  width: 24,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.delete, color: Colors.black),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) onDelete();
+                  },
+                  child: Image.asset(
+                    'assets/Iconos compartidos/basura.png',
+                    height: 24,
+                    width: 24,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.delete, color: Colors.black),
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 14),

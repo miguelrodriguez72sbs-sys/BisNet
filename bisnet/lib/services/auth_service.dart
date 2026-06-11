@@ -6,8 +6,13 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://7b0b6c8c12fbc7.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://f1c34588cd3669.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
 
+  static String get gameUrl {
+    return baseUrl.replaceAll('/api', '/juego-phaser_3/index.html');
+  } //Ruta de la página del juego
+
+  //
   // Guarda el token
   static Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
