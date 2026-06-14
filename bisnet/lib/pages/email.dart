@@ -94,10 +94,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                         const SizedBox(height: 32),
 
                         // === LOG IN centrado ===
-                        const Center(
+                        Center(
                           child: Text(
-                            'Log in',
-                            style: TextStyle(
+                            t.login,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                             ),
@@ -106,11 +106,11 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                         const SizedBox(height: 8),
 
-                        const Center(
+                        Center(
                           child: Text(
-                            'Enter your details to continue',
+                            t.enterDetails,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 15,
                               color: Colors.black87,
                             ),
@@ -127,7 +127,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               Icons.email_outlined,
                               color: Color(0xFF488C61),
                             ),
-                            hintText: 'E-mail',
+                            hintText: t.email,
                             hintStyle: const TextStyle(
                               fontStyle: FontStyle.italic,
                             ),
@@ -167,7 +167,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               Icons.lock_outline,
                               color: Color(0xFF488C61),
                             ),
-                            hintText: 'Password',
+                            hintText: t.password,
                             hintStyle: const TextStyle(
                               fontStyle: FontStyle.italic,
                             ),
@@ -244,9 +244,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               ),
                               elevation: 2,
                             ),
-                            child: const Text(
-                              'Log in',
-                              style: TextStyle(
+                            child: Text(
+                              t.login,
+                              style: const TextStyle(
                                 fontSize: 17,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -305,7 +305,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                   // === MASCOTA — asomándose desde abajo del card ===
                   Positioned(
-                    bottom: 0, // pegada al fondo del card
+                    bottom: 0,
                     left: 0,
                     right: 0,
                     child: Center(

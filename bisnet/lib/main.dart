@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
           await AuthService.deleteToken();
           Navigator.pushReplacement(
             context,
-            // ✅ Si no hay sesión va al selector de idioma
+            //Si no hay sesión va al selector de idioma
             MaterialPageRoute(builder: (context) => const TraductorScreen()),
           );
         }

@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:bisnet/pages/Terminos_y_condiciones.dart';
 import 'package:bisnet/pages/home.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   const RegisterFormScreen({super.key});
@@ -18,8 +19,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _acceptedTerms = false;
-
-  // ← método aquí dentro de la clase State, no en StatefulWidget
+  // Validación para asegurar que el correo sea institucional
   bool _esCorreoInstitucional(String email) {
     return email.toLowerCase().endsWith('@utbispuebla.edu.mx');
   }
@@ -35,6 +35,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
@@ -99,7 +100,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     TextField(
                       controller: nameController,
                       decoration: InputDecoration(
-                        hintText: 'Name',
+                        hintText: t.name,
                         prefixIcon: const Icon(
                           Icons.person_outline,
                           color: Color(0xFF488C61),
@@ -133,7 +134,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       controller: idController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: 'ID',
+                        hintText: t.id,
                         prefixIcon: const Icon(
                           Icons.badge_outlined,
                           color: Color(0xFF488C61),
@@ -167,7 +168,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        hintText: 'Email institucional (@utbispuebla.edu.mx)',
+                        hintText: t.email,
                         prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: Color(0xFF488C61),
@@ -201,7 +202,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        hintText: t.password,
                         prefixIcon: const Icon(
                           Icons.lock_outline,
                           color: Color(0xFF488C61),
@@ -265,9 +266,9 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                   color: Colors.black87,
                                 ),
                                 children: [
-                                  const TextSpan(text: 'I accept the '),
+                                  TextSpan(text: '${t.accept} '),
                                   TextSpan(
-                                    text: 'Terms and Conditions',
+                                    text: t.termsConditions,
                                     style: const TextStyle(
                                       color: Color(0xFF488C61),
                                       fontWeight: FontWeight.w600,
@@ -308,7 +309,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         ),
                         onPressed: _acceptedTerms
                             ? () async {
-                                // ← validación ANTES de llamar al backend
                                 if (!_esCorreoInstitucional(
                                   emailController.text,
                                 )) {
@@ -354,9 +354,12 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                 }
                               }
                             : null,
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          t.register,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),

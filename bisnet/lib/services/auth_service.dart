@@ -6,7 +6,7 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://f1c34588cd3669.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://27537b3d163423.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
 
   static String get gameUrl {
     return baseUrl.replaceAll('/api', '/juego-phaser_3/index.html');

@@ -21,6 +21,12 @@ class AppLocalizations {
       'cancel': 'Cancelar',
       'delete_confirm': '¿Estás seguro?',
       'no_posts': 'No hay publicaciones aún',
+      'accept': 'Acepto',
+      'welcome_to': 'Bienvenido a',
+      'connect_community':
+          'Conecta con tu comunidad y planifica tus próximas estancias',
+      'explore_guest': 'Explorar como invitado',
+      'translator': 'Traductor',
 
       // Login / Registro
       'enter_details': 'Ingresa tus datos para continuar',
@@ -68,11 +74,17 @@ class AppLocalizations {
       'cancel': 'Cancel',
       'delete_confirm': 'Are you sure?',
       'no_posts': 'No posts yet',
+      'welcome_to': 'Welcome to',
+      'explore_guest': 'Explore as guest',
+      'translator': 'Translator',
       // Login / Register
       'enter_details': 'Enter your details to continue',
       'name': 'Name',
       'id': 'ID',
       'accept_terms': 'I accept the terms and conditions',
+      'accept': 'I accept',
+      'connect_community':
+          'Connect with your community and plan your future stays',
 
       // Navigation
       'stays': 'Stays',
@@ -106,6 +118,52 @@ class AppLocalizations {
   String translate(String key) {
     return _localizedStrings[locale.languageCode]?[key] ?? key;
   }
+
+  // Getters
+  String get login => translate('login');
+  String get register => translate('register');
+  String get email => translate('email');
+  String get password => translate('password');
+  String get home => translate('home');
+  String get profile => translate('profile');
+  String get posts => translate('posts');
+  String get delete => translate('delete');
+  String get cancel => translate('cancel');
+  String get deleteConfirm => translate('delete_confirm');
+  String get noPosts => translate('no_posts');
+  String get welcomeTo => translate('welcome_to');
+  String get connectCommunity => translate('connect_community');
+  String get exploreGuest => translate('explore_guest');
+  String get translator => translate('translator');
+
+  String get enterDetails => translate('enter_details');
+  String get name => translate('name');
+  String get id => translate('id');
+  String get acceptTerms => translate('accept_terms');
+  String get accept => translate('accept');
+
+  String get stays => translate('stays');
+  String get plays => translate('plays');
+  String get search => translate('search');
+
+  String get company => translate('company');
+  String get career => translate('career');
+  String get date => translate('date');
+  String get description => translate('description');
+  String get seeDetails => translate('see_details');
+  String get addPicturesVideos => translate('add_pictures_videos');
+  String get post => translate('post');
+
+  String get edit => translate('edit');
+  String get like => translate('like');
+
+  String get logout => translate('logout');
+  String get termsConditions => translate('terms_conditions');
+  String get loading => translate('loading');
+  String get error => translate('error');
+  String get success => translate('success');
+  String get save => translate('save');
+  String get close => translate('close');
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
