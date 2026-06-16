@@ -331,3 +331,88 @@ body {
 .modal-content { background: white; padding: 25px; border-radius: 6px; width: 420px; position: relative; }
 .close-modal { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; }
 .games-box { background: white; padding: 40px; border-radius: 8px; text-align: center; }
+/* Contenedor relativo para que el lápiz flote dentro de este cuadro */
+.profile-avatar-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+}
+
+/* La imagen recortada en círculo perfecto */
+.avatar-profile-page {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* Hace la imagen redonda */
+    object-fit: cover;   /* Evita que tu foto de WhatsApp se estire o deforme */
+    border: 3px solid #ffffff; /* Pequeño borde blanco de separación */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Sombra suave para que resalte */
+}
+
+/* El botón flotante del lápiz (Círculo Verde) */
+.edit-avatar-pencil {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background-color: var(--primary-dark, #2e7d32); /* Tu color verde institucional */
+    color: white; /* Color blanco para el icono SVG */
+    width: 34px;
+    height: 34px;
+    border-radius: 50%; /* Círculo perfecto para el botón */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    z-index: 5;
+}
+
+/* Efecto visual cuando pasas el mouse por encima del lápiz */
+.edit-avatar-pencil:hover {
+    transform: scale(1.1);
+    background-color: #1b5e20; /* Un verde un poco más oscuro al hacer hover */
+}
+
+/* Asegura que el SVG herede el color blanco correctamente */
+.edit-avatar-pencil svg {
+    display: block;
+}
+/* Caja del área de carga (Dropzone) */
+.upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 180px;
+    border: 2px dashed #b0bec5; /* Borde punteado estético */
+    border-radius: 16px;       /* Bordes muy redondos y suaves */
+    background-color: #fafafa;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin-top: 8px;
+}
+
+.upload-dropzone:hover {
+    background-color: #f1f8e9;       /* Color sutil de tu paleta verde en hover */
+    border-color: var(--primary-dark, #2e7d32);
+}
+
+.dropzone-content {
+    text-align: center;
+    padding: 20px;
+}
+
+/* Control estricto de las multimedia previsualizadas o publicadas para evitar que desaparezcan */
+.post-media, .dropzone-preview-element {
+    width: 100%;
+    max-height: 280px;      /* Altura máxima para que no rompa el feed */
+    object-fit: cover;      /* Ajuste perfecto */
+    border-radius: 12px;    /* Bordes redondos en las fotos del muro */
+    display: block;
+    margin-top: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}

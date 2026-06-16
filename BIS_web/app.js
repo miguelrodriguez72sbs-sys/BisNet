@@ -6,8 +6,12 @@ let currentUser = {
     name: "",
     career: "",
     bio: "",
-    avatar: ""
+    avatar: "Lechuzas/Logo.png"
 };
+
+// Variables globales al inicio de tu app.js
+let tempPostMedia = "";     /* Guarda el archivo en Base64 */
+let tempPostMediaType = ""; /* Guarda si es 'image' o 'video' */
 
 // Arreglos vacíos esperando tus peticiones Fetch / Axios
 let posts = [];
@@ -78,9 +82,16 @@ function initApp() {
     document.getElementById('auth-container').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
     
-    document.getElementById('edit-name').value = currentUser.name;
-    document.getElementById('edit-career').value = currentUser.career;
-    document.getElementById('edit-bio').value = currentUser.bio;
+    // Verificamos si existen antes de asignarles valor
+    const nameEl = document.getElementById('edit-name');
+    if(nameEl) nameEl.value = currentUser.name;
+
+    const careerEl = document.getElementById('edit-career');
+    if(careerEl) careerEl.value = currentUser.career;
+
+    const bioEl = document.getElementById('edit-bio');
+    if(bioEl) bioEl.value = currentUser.bio;
+
     document.getElementById('edit-avatar').value = currentUser.avatar;
     document.getElementById('profile-preview-img').src = currentUser.avatar || "";
 
@@ -100,15 +111,24 @@ function initApp() {
 }
 
 function updateStatusNavbar() {
+    const navAvatar = document.getElementById('nav-avatar'); // O el ID que tenga tu foto del menú
+    if (navAvatar) {
+        navAvatar.src = currentUser.avatar;
+    }
     document.getElementById('user-display-status').innerText = `${currentUser.name} | ${currentUser.career}`;
     document.getElementById('date-indicator').innerText = new Date().toLocaleDateString();
 }
 
 function renderFeed() {
-    const feed = document.getElementById('news-feed');
+    // ESTA LÍNEA ES OBLIGATORIA
+    const feed = document.getElementById('news-feed'); 
     const myPostsContainer = document.getElementById('my-posts-container');
+    
+    // Si no encuentra el contenedor, salimos para que no de error
+    if (!feed) return; 
+
     feed.innerHTML = "";
-    myPostsContainer.innerHTML = "";
+    if (myPostsContainer) myPostsContainer.innerHTML = "";
 
     if (posts.length === 0) {
         feed.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No hay publicaciones disponibles en este momento.</p>`;
@@ -117,9 +137,16 @@ function renderFeed() {
     }
 
     posts.forEach(post => {
+        // ========================================================
+        // AQUÍ SE DECIDE SI SE DIBUJA UNA IMAGEN O UN VIDEO DE LA PC
+        // ========================================================
         let mediaHtml = "";
-        if(post.image) mediaHtml = `<img src="${post.image}" class="post-media">`;
-        else if(post.video) mediaHtml = `<iframe class="post-media" src="${post.video}" frameborder="0" allowfullscreen style="height:240px;"></iframe>`;
+        if(post.image) {
+            mediaHtml = `<img src="${post.image}" class="post-media">`;
+        } else if(post.video) {
+            // Cambiamos el iframe por una etiqueta video con controles para archivos locales
+            mediaHtml = `<video src="${post.video}" class="post-media" controls style="max-height:300px; width:100%; background:black; border-radius:6px;"></video>`;
+        }
 
         let deleteButtonHtml = "";
         if(!isGuest && post.author === currentUser.name) {
@@ -129,8 +156,8 @@ function renderFeed() {
         let postTemplate = `
             <div class="post-card">
                 ${deleteButtonHtml}
-                <div class="post-header">
-                    <img src="${post.avatar || 'https://via.placeholder.com/45'}" class="avatar">
+                <div class="post-header">                  
+                  <img src="${post.avatar && post.avatar !== '' ? post.avatar : 'Lechuzas/Logo.png'}" class="avatar">
                     <div class="post-info">
                         <h4>${post.author}</h4>
                         <span>${post.date}</span>
@@ -139,11 +166,11 @@ function renderFeed() {
                 <div class="post-content">
                     <p>${post.desc}</p>
                     <strong style="color:var(--primary-dark);">${post.tags}</strong>
-                    ${mediaHtml}
+                    <div style="margin-top:10px;">${mediaHtml}</div>
                 </div>
                 <div class="post-actions">
                     <button class="like-btn ${post.likedByMe ? 'liked' : ''}" onclick="toggleLike(${post.id})">
-                        ❤️ <span id="like-count-${post.id}">${post.likes}</span> Likes
+                        🌟 <span id="like-count-${post.id}">${post.likes}</span> Likes
                     </button>
                 </div>
             </div>
@@ -156,6 +183,12 @@ function renderFeed() {
         }
     });
 }
+
+        feed.innerHTML += postTemplate;
+
+        if(post.author === currentUser.name) {
+            myPostsContainer.innerHTML += postTemplate;
+        }
 
 function toggleLike(postId) {
     if(isGuest) return;
@@ -183,44 +216,49 @@ function createNewPost() {
     if(isGuest) return;
     const desc = document.getElementById('post-desc').value;
     const tags = document.getElementById('post-tags').value;
-    const img = document.getElementById('post-img').value;
-    const video = document.getElementById('post-video').value;
 
     if(!desc) return;
 
-    // Estructura lista para enviar al backend mediante POST
+    // Estructura del nuevo post adaptada para archivos multimedia locales
     const newPost = {
         id: Date.now(),
         author: currentUser.name,
         avatar: currentUser.avatar,
-        date: "Hace ",
+        date: "Hace un momento",
         desc: desc,
         tags: tags,
-        image: img,
-        video: video,
+        image: tempPostMediaType === 'image' ? tempPostMedia : "", // Si es imagen, se guarda aquí
+        video: tempPostMediaType === 'video' ? tempPostMedia : "", // Si es video, se guarda aquí
         likes: 0,
         likedByMe: false
     };
 
     posts.unshift(newPost);
 
+    // Limpiamos los campos del formulario y las variables temporales
     document.getElementById('post-desc').value = "";
     document.getElementById('post-tags').value = "";
-    document.getElementById('post-img').value = "";
-    document.getElementById('post-video').value = "";
+    document.getElementById('post-media-file').value = ""; // Resetea el input de la PC
+    tempPostMedia = "";
+    tempPostMediaType = "";
     
     renderFeed();
     switchView('view-home', document.querySelector('[data-view="view-home"]'));
+     // Agrega esto adentro del final de tu función createNewPost() actual:
+    document.getElementById('dropzone-prompt').style.display = 'block';
+    document.getElementById('dropzone-preview-container').style.display = 'none';
+    document.getElementById('dropzone-preview-container').innerHTML = "";
 }
 
 function saveProfile() {
     currentUser.name = document.getElementById('edit-name').value;
     currentUser.career = document.getElementById('edit-career').value;
     currentUser.bio = document.getElementById('edit-bio').value;
-    currentUser.avatar = document.getElementById('edit-avatar').value;
+    // currentUser.avatar = document.getElementById('edit-avatar').value;
 
     updateStatusNavbar();
     renderFeed();
+    
     alert("Perfil actualizado localmente.");
 }
 
@@ -289,4 +327,61 @@ function closeModal() {
 
 function logout() {
     location.reload();
+}
+// Función para procesar la imagen de la PC y mostrarla al instante
+function previewLocalImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const previewImg = document.getElementById('profile-preview-img');
+            if (previewImg) {
+                previewImg.src = e.target.result;
+            }
+            
+            // 1. Guardamos la foto en el usuario actual
+            currentUser.avatar = e.target.result;
+            
+            // 2. ¡AQUÍ ESTÁ EL TRUCO! Llamamos a tu función para que actualice el Navbar de inmediato
+            updateStatusNavbar();
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+function handlePostMedia(input) {
+    const promptZone = document.getElementById('dropzone-prompt');
+    const previewContainer = document.getElementById('dropzone-preview-container');
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            tempPostMedia = e.target.result; // Base64 listo
+            
+            // Ocultamos el texto original de la nube
+            promptZone.style.display = 'none';
+            previewContainer.innerHTML = "";
+            previewContainer.style.display = 'block';
+            
+            // Evaluamos el tipo de archivo y creamos su etiqueta correspondiente
+            if (file.type.startsWith('video/')) {
+                tempPostMediaType = 'video';
+                previewContainer.innerHTML = `<video src="${e.target.result}" class="dropzone-preview-element" autoplay loop muted style="height:100%; width:100%; object-fit:contain; background:#000;"></video>`;
+            } else if (file.type.startsWith('image/')) {
+                tempPostMediaType = 'image';
+                previewContainer.innerHTML = `<img src="${e.target.result}" class="dropzone-preview-element" style="height:100%; width:100%; object-fit:contain;">`;
+            }
+        }
+        
+        reader.readAsDataURL(file);
+    } else {
+        // Si cancela la selección, regresamos el diseño a su estado inicial
+        tempPostMedia = "";
+        tempPostMediaType = "";
+        promptZone.style.display = 'block';
+        previewContainer.style.display = 'none';
+        previewContainer.innerHTML = "";
+    }
 }
