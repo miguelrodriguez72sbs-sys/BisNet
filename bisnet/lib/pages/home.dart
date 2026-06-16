@@ -7,6 +7,7 @@ import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -62,11 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Guest solo puede usar Home y Games
           if (token == null && [1, 2, 4].contains(index)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('You must be logged in to access this section.'),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(t.loginRequired)));
             return;
           }
 
@@ -74,15 +75,24 @@ class _HomeScreenState extends State<HomeScreen> {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.apartment), label: 'Stays'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'Post'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: t.home),
           BottomNavigationBarItem(
-            icon: Icon(Icons.sports_esports),
-            label: 'Games',
+            icon: const Icon(Icons.apartment),
+            label: t.stays,
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.add_box),
+            label: t.post,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.sports_esports),
+            label: t.plays,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: t.profile,
+          ),
         ],
       ),
     );

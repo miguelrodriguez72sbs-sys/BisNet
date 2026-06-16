@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -37,6 +38,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
@@ -60,7 +63,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // === LOGO + BISNET ===
+                  // LOGO + BISNET
                   Row(
                     children: [
                       Container(
@@ -95,18 +98,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   const SizedBox(height: 24),
 
-                  const Text(
-                    'Edit Profile',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  Text(
+                    t.editProfile,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(height: 24),
 
-                  // === NAME ===
+                  // NAME
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      hintText: 'Name',
+                      hintText: t.name,
                       prefixIcon: const Icon(
                         Icons.person_outline,
                         color: Color(0xFF488C61),
@@ -135,11 +141,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   const SizedBox(height: 16),
 
-                  // === CAREER ===
+                  // CAREER
                   TextField(
                     controller: careerController,
                     decoration: InputDecoration(
-                      hintText: 'Career',
+                      hintText: t.career,
                       prefixIcon: const Icon(
                         Icons.school_outlined,
                         color: Color(0xFF488C61),
@@ -168,12 +174,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   const SizedBox(height: 16),
 
-                  // === DESCRIPTION ===
+                  // DESCRIPTION
                   TextField(
                     controller: descriptionController,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText: 'Description',
+                      hintText: t.description,
                       prefixIcon: const Icon(
                         Icons.description_outlined,
                         color: Color(0xFF488C61),
@@ -202,7 +208,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   const SizedBox(height: 24),
 
-                  // === BOTÓN SAVE ===
+                  // BOTÓN SAVE
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -223,30 +229,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                           if (response.containsKey('user')) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Profile updated successfully'),
+                              SnackBar(
+                                content: Text(t.profileUpdatedSuccessfully),
                               ),
                             );
+
                             Navigator.pop(context, response['user']);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  response['message'] ??
-                                      'Error updating profile',
+                                  response['message'] ?? t.errorUpdatingProfile,
                                 ),
                               ),
                             );
                           }
                         } catch (e) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${t.error}: $e')),
+                          );
                         }
                       },
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      child: Text(
+                        t.save,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),

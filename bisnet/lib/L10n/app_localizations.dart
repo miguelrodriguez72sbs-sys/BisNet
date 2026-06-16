@@ -60,6 +60,12 @@ class AppLocalizations {
       'success': 'Éxito',
       'save': 'Guardar',
       'close': 'Cerrar',
+      'or': 'o',
+      'incorrect_credentials': 'Credenciales incorrectas',
+      'login_required': 'Debes iniciar sesión para acceder a esta sección',
+      'edit_profile': 'Editar perfil',
+      'profile_updated_successfully': 'Perfil actualizado correctamente',
+      'error_updating_profile': 'Error al actualizar el perfil',
     },
 
     'en': {
@@ -112,6 +118,12 @@ class AppLocalizations {
       'success': 'Success',
       'save': 'Save',
       'close': 'Close',
+      'or': 'or',
+      'incorrect_credentials': 'Incorrect credentials',
+      'login_required': 'You must be logged in to access this section.',
+      'edit_profile': 'Edit Profile',
+      'profile_updated_successfully': 'Profile updated successfully',
+      'error_updating_profile': 'Error updating profile',
     },
   };
 
@@ -164,6 +176,13 @@ class AppLocalizations {
   String get success => translate('success');
   String get save => translate('save');
   String get close => translate('close');
+  String get or => translate('or');
+  String get incorrectCredentials => translate('incorrect_credentials');
+  String get loginRequired => translate('login_required');
+  String get editProfile => translate('edit_profile');
+  String get profileUpdatedSuccessfully =>
+      translate('profile_updated_successfully');
+  String get errorUpdatingProfile => translate('error_updating_profile');
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

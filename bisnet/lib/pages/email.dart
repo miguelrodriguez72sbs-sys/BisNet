@@ -223,17 +223,14 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        response['message'] ??
-                                            'Incorrect credentials',
-                                      ),
+                                      content: Text(t.incorrectCredentials),
                                     ),
                                   );
                                 }
                               } catch (e) {
                                 debugPrint('ERROR: $e');
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')),
+                                  SnackBar(content: Text('${t.error}: $e')),
                                 );
                               }
                             },
@@ -257,10 +254,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                         const SizedBox(height: 16),
 
-                        const Center(
+                        Center(
                           child: Text(
-                            'or',
-                            style: TextStyle(color: Colors.grey),
+                            t.or,
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ),
 
@@ -288,8 +285,8 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            child: const Text(
-                              'Explore as guest',
+                            child: Text(
+                              t.exploreGuest,
                               style: TextStyle(
                                 color: Color(0xFF488C61),
                                 fontWeight: FontWeight.w500,
