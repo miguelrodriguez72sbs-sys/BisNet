@@ -19,7 +19,7 @@
             <div class="mascot-side">
                 <div class="circle-decor cd1"></div>
                 <div class="circle-decor cd2"></div>
-                <img src="Lechuzas/Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
+                <img src="Lechuzas\Lechuza_3.png" class="mascot-side" alt="mascota">
             </div>
             <div class="form-side">
                 <h1 class="auth-title" data-es="Welcome to BISNET" data-en="Welcome to BISNET">Welcome to BISNET</h1>
@@ -43,7 +43,7 @@
         <div id="card-login" class="auth-screen">
             <div class="mascot-side">
                 <div class="circle-decor cd1"></div>
-                <img src="Lechuzas/Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
+                <img src="Lechuzas\Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
             </div>
             <div class="form-side">
                 <h1 class="auth-title">BISNET</h1>
@@ -70,27 +70,27 @@
         <div id="card-register" class="auth-screen">
             <div class="mascot-side">
                 <div class="circle-decor cd1"></div>
-                <img src="Lechuzas/Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
+                <img src="Lechuzas\Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
             </div>
             <div class="form-side">
                 <h1 class="auth-title">BISNET</h1>
                 <div class="form-group-row">
                     <div class="form-group">
                         <label data-es="Name" data-en="Name">Name</label>
-                        <input type="text" id="reg-name" placeholder="nombre">
+                        <input type="text" id="reg-name" placeholder=" ">                                                                        
                     </div>
                     <div class="form-group">
-                        <label data-es="Carrera" data-en="Career">Carrera</label>
+                        <label data-es="ID" data-en="ID">ID</label>
                         <input type="text" id="reg-career" placeholder=" ">
                     </div>
                 </div>
                 <div class="form-group">
                     <label data-es="E-mail" data-en="E-mail">E-mail</label>
-                    <input type="email" id="reg-email" placeholder="E-mail">
+                    <input type="email" id="reg-email" placeholder=" ">
                 </div>
                 <div class="form-group">
                     <label data-es="Password" data-en="Password">Password</label>
-                    <input type="password" id="reg-pass" placeholder="Crea una contraseña">
+                    <input type="password" id="reg-pass" placeholder=" ">
                 </div>
                 <div class="form-group-checkbox">
                     <input type="checkbox" id="accept-terms">
@@ -110,7 +110,7 @@
         <div id="card-terms" class="auth-screen">
             <div class="mascot-side">
                 <div class="circle-decor cd1"></div>
-                <img src="Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
+                <img src="Lechuzas\Lechuza_3.png" class="mascot-img-fluid" alt="mascota">
             </div>
             <div class="form-side">
                 <h1 class="auth-title">BISNET</h1>
@@ -220,12 +220,18 @@
             <div id="view-profile" class="view-section">
                 <div class="feed-container profile-box">
                     <h3 style="margin-bottom:20px;" data-es="Mi Perfil" data-en="My Profile">Mi Perfil</h3>
-                    <div class="profile-header-edit">
-                        <img id="profile-preview-img" class="avatar" src="" style="width:100px; height:100px; background-color:#ccc;">
-                        <div style="flex-grow:1;">
-                            <label data-es="Foto Perfil" data-en="Profile Picture">Foto Perfil</label>
-                            <input type="text" id="edit-avatar" style="width:100%; padding:8px; margin-top:5px;" onchange="document.getElementById('profile-preview-img').src=this.value">
-                        </div>
+                    <div class="profile-header-edit" style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px;">
+                    <div class="profile-avatar-container">
+                    <img id="profile-preview-img" class="avatar-profile-page" src="Lechuzas/Logo.png" alt="Mi Perfil">        
+                    <label for="edit-avatar-file" class="edit-avatar-pencil" title="Cambiar foto de perfil">
+                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                     </svg>
+                     </label>        
+                    <input type="file" id="edit-avatar-file" accept="image/*" style="display: none;" onchange="previewLocalImage(this)">
+                      </div>
+                    <div style="flex-grow: 1;">
+                    </div>
                     </div>
                     <div class="form-group">
                         <label data-es="Nombre" data-en="Name">Nombre</label>
@@ -236,7 +242,7 @@
                         <input type="text" id="edit-career">
                     </div>
                     <div class="form-group">
-                        <label data-es="Descripción / Biografía" data-en="Description / Bio">Descripción / Biografía</label>
+                        <label data-es="Descripción" data-en="Description">Descripción</label>
                         <textarea id="edit-bio" rows="3"></textarea>
                     </div>
                     <button class="btn btn-primary" onclick="saveProfile()" data-es="Guardar Cambios" data-en="Save Changes">Guardar Cambios</button>
@@ -259,13 +265,23 @@
                         <input type="text" id="post-tags" placeholder="#UTBIS">
                     </div>
                     <div class="form-group">
-                        <label data-es="Imagen" data-en="Image">Imagen</label>
-                        <input type="text" id="post-img" placeholder="Imagen">
-                    </div>
-                    <div class="form-group">
-                        <label data-es="video" data-en="Video"> Video</label>
-                        <input type="text" id="post-video" placeholder="video">
-                    </div>
+    <label data-es="Contenido Multimedia de tu Proyecto" data-en="Project Media Content">Contenido Multimedia de tu Proyecto</label>
+    
+    <label for="post-media-file" class="upload-dropzone" id="dropzone-area">
+        <div class="dropzone-content" id="dropzone-prompt">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" style="color: #999; margin-bottom: 10px;">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+            </svg>
+            <p style="margin: 0; font-size: 14px; color: #666; font-weight: bold;" data-es="Presiona aquí para elegir imagen o video" data-en="Click here to choose image or video">Presiona aquí para elegir imagen o video</p>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;" data-es=" " data-en=" "> </p>
+        </div>
+        
+        <div id="dropzone-preview-container" style="display: none; width: 100%; height: 100%;"></div>
+    </label>
+    
+    <input type="file" id="post-media-file" accept="image/*,video/*" style="display: none;" onchange="handlePostMedia(this)">
+</div>
+                    
                     <button class="btn btn-accent publish-btn" onclick="createNewPost()" data-es=" Publicar Proyecto Ahora" data-en=" Publish Project Now"> Publicar Proyecto Ahora</button>
                 </div>
             </div>
