@@ -6,10 +6,13 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://27537b3d163423.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://a9a4c95e97f16a.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
 
   static String get gameUrl {
-    return baseUrl.replaceAll('/api', '/juego-phaser_3/index.html');
+    return baseUrl.replaceAll(
+      '/api',
+      '/juego-phaser_3/juego-phaser/index.html',
+    );
   } //Ruta de la página del juego
 
   //
@@ -195,6 +198,22 @@ class AuthService {
 
     final response = await http.delete(
       Uri.parse('$baseUrl/posts/$id'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  // Toggle like en un post
+  static Future<Map<String, dynamic>> toggleLike(int postId) async {
+    final token = await getToken();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/posts/$postId/like'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',

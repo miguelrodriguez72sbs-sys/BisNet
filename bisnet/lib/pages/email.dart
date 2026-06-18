@@ -212,11 +212,14 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                                 debugPrint('Answer: $response');
 
+                                if (!mounted)
+                                  return; // ✅ evita el error de widget desactivado
+
                                 if (response.containsKey('token')) {
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
+                                      builder: (context) => const HomeScreen(),
                                     ),
                                     (route) => false,
                                   );
@@ -229,6 +232,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                                 }
                               } catch (e) {
                                 debugPrint('ERROR: $e');
+                                if (!mounted) return; // ✅ aquí también
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('${t.error}: $e')),
                                 );
@@ -247,6 +251,51 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                                 fontSize: 17,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Center(
+                          child: Text(
+                            t.or,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // === BOTÓN EXPLORE AS GUEST ===
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HomeScreen(isGuest: true),
+                                ),
+                                (route) => false,
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: Color(0xFF488C61),
+                                width: 1.5,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Text(
+                              t.exploreGuest,
+                              style: const TextStyle(
+                                color: Color(0xFF488C61),
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),

@@ -10,7 +10,8 @@ import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isGuest;
+  const HomeScreen({super.key, this.isGuest = false});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,12 +20,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  List<Widget> get _pages => [
     const HomeFeedScreen(),
-    const EstadiasScreen(),
+    EstadiasScreen(isGuest: widget.isGuest),
     const PostScreen(),
     const GamesScreen(),
-    const ProfileScreen(),
+    ProfileScreen(isGuest: widget.isGuest),
   ];
 
   @override
@@ -60,11 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         selectedItemColor: const Color(0xFF488C61),
         unselectedItemColor: Colors.grey,
-        onTap: (index) async {
-          final token = await AuthService.getToken();
-
-          // Guest solo puede usar Home y Games
-          if (token == null && [1, 2, 4].contains(index)) {
+        onTap: (index) {
+          if (widget.isGuest && [1, 2].contains(index)) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(t.loginRequired)));

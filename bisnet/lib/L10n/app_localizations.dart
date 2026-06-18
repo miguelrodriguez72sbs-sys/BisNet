@@ -35,8 +35,8 @@ class AppLocalizations {
       'accept_terms': 'Acepto los términos y condiciones',
 
       // Navegación
-      'stays': 'Estancias',
-      'plays': 'Actividades',
+      'stays': 'Estadias',
+      'plays': 'Juegos',
       'search': 'Buscar',
 
       // Publicaciones

@@ -4,7 +4,8 @@ import 'package:bisnet/pages/login.dart';
 import 'package:bisnet/pages/edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final bool isGuest;
+  const ProfileScreen({super.key, this.isGuest = false});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();

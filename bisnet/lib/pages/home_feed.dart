@@ -23,7 +23,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     try {
       final posts = await AuthService.getPosts();
       final user = await AuthService.getCurrentUser();
-      if (!mounted) return; // 👈 agrega esto
+      if (!mounted) return;
       setState(() {
         _posts = posts;
         _currentUser = user;
@@ -74,7 +74,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 // =========================================================================
 // WIDGET: TARJETA DE PUBLICACIÓN
 // =========================================================================
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   final Map<String, dynamic>? currentUser;
   final VoidCallback onDelete;
@@ -87,7 +87,51 @@ class PostCard extends StatelessWidget {
   });
 
   @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool _likedByMe = false;
+  int _likesCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _likedByMe = widget.post['liked_by_me'] == true;
+    _likesCount = (widget.post['likes_count'] is int)
+        ? widget.post['likes_count']
+        : 0;
+  }
+
+  Future<void> _handleLike() async {
+    setState(() {
+      _likedByMe = !_likedByMe;
+      _likesCount += _likedByMe ? 1 : -1;
+    });
+
+    try {
+      final response = await AuthService.toggleLike(widget.post['id']);
+      if (!mounted) return;
+      setState(() {
+        _likedByMe = response['liked'] == true;
+        _likesCount = (response['likes_count'] is int)
+            ? response['likes_count']
+            : _likesCount;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _likedByMe = !_likedByMe;
+        _likesCount += _likedByMe ? 1 : -1;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final post = widget.post;
+    final currentUser = widget.currentUser;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(20),
@@ -127,7 +171,7 @@ class PostCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              if (currentUser != null && post['user_id'] == currentUser!['id'])
+              if (currentUser != null && post['user_id'] == currentUser['id'])
                 GestureDetector(
                   onTap: () async {
                     final confirm = await showDialog<bool>(
@@ -150,7 +194,7 @@ class PostCard extends StatelessWidget {
                         ],
                       ),
                     );
-                    if (confirm == true) onDelete();
+                    if (confirm == true) widget.onDelete();
                   },
                   child: Image.asset(
                     'assets/Iconos compartidos/basura.png',
@@ -162,6 +206,7 @@ class PostCard extends StatelessWidget {
                 ),
             ],
           ),
+
           const SizedBox(height: 14),
 
           Text(
@@ -199,25 +244,27 @@ class PostCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Row(
-            children: [
-              Image.asset(
-                'assets/Iconos compartidos/estrella.png',
-                height: 24,
-                width: 24,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.star_border, color: Colors.black),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '0',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          // ✅ Botón de like funcional
+          GestureDetector(
+            onTap: _handleLike,
+            child: Row(
+              children: [
+                Icon(
+                  _likedByMe ? Icons.star : Icons.star_border,
+                  color: _likedByMe ? Colors.amber : Colors.black,
+                  size: 24,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  '$_likesCount',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

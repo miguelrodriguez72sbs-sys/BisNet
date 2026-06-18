@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 
 class EstadiasScreen extends StatefulWidget {
-  const EstadiasScreen({super.key});
+  final bool isGuest;
+  const EstadiasScreen({super.key, this.isGuest = false});
 
   @override
   State<EstadiasScreen> createState() => _EstadiasScreenState();
