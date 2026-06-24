@@ -28,6 +28,12 @@ class AppLocalizations {
       'explore_guest': 'Explorar como invitado',
       'translator': 'Traductor',
 
+      //Escena de las comunidades
+      'communities': 'Comunidades',
+      'no_communities': 'No hay comunidades aún',
+      'coming_soon_communities':
+          'Próximamente podrás crear y unirte a comunidades',
+
       // Login / Registro
       'enter_details': 'Ingresa tus datos para continuar',
       'name': 'Nombre',
@@ -83,6 +89,13 @@ class AppLocalizations {
       'welcome_to': 'Welcome to',
       'explore_guest': 'Explore as guest',
       'translator': 'Translator',
+
+      // Communities scene
+      'communities': 'Communities',
+      'no_communities': 'No communities yet',
+      'coming_soon_communities':
+          'Soon you will be able to create and join communities',
+
       // Login / Register
       'enter_details': 'Enter your details to continue',
       'name': 'Name',
@@ -147,7 +160,9 @@ class AppLocalizations {
   String get connectCommunity => translate('connect_community');
   String get exploreGuest => translate('explore_guest');
   String get translator => translate('translator');
-
+  String get communities => translate('communities');
+  String get noCommunities => translate('no_communities');
+  String get comingSoon => translate('coming_soon_communities');
   String get enterDetails => translate('enter_details');
   String get name => translate('name');
   String get id => translate('id');

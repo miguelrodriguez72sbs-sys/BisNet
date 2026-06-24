@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/pages/communities.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({super.key});
@@ -35,6 +36,19 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     }
   }
 
+  Widget _buildFAB(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: const Color(0xFF488C61),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ComunidadesScreen()),
+        );
+      },
+      child: const Icon(Icons.group, color: Colors.white, size: 28),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -42,30 +56,38 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     }
 
     if (_posts.isEmpty) {
-      return const Center(
-        child: Text(
-          'No hay publicaciones aún',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+      return Scaffold(
+        floatingActionButton: _buildFAB(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        body: const Center(
+          child: Text(
+            'No hay publicaciones aún',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadData,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          final post = _posts[index];
-          return PostCard(
-            post: post,
-            currentUser: _currentUser,
-            onDelete: () async {
-              await AuthService.deletePost(post['id']);
-              _loadData();
-            },
-          );
-        },
+    return Scaffold(
+      floatingActionButton: _buildFAB(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: _posts.length,
+          itemBuilder: (context, index) {
+            final post = _posts[index];
+            return PostCard(
+              post: post,
+              currentUser: _currentUser,
+              onDelete: () async {
+                await AuthService.deletePost(post['id']);
+                _loadData();
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -200,7 +222,7 @@ class _PostCardState extends State<PostCard> {
                     'assets/Iconos compartidos/basura.png',
                     height: 24,
                     width: 24,
-                    errorBuilder: (context, error, stackTrace) =>
+                    errorBuilder: (_, __, ___) =>
                         const Icon(Icons.delete, color: Colors.black),
                   ),
                 ),
@@ -234,7 +256,7 @@ class _PostCardState extends State<PostCard> {
                 '${AuthService.storageUrl}/${post['media_path']}',
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(
+                errorBuilder: (_, __, ___) => const Icon(
                   Icons.broken_image,
                   size: 64,
                   color: Colors.grey,
@@ -244,7 +266,6 @@ class _PostCardState extends State<PostCard> {
 
           const SizedBox(height: 12),
 
-          // ✅ Botón de like funcional
           GestureDetector(
             onTap: _handleLike,
             child: Row(

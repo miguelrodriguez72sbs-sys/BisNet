@@ -6,7 +6,7 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://a9a4c95e97f16a.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://e81cc284d899b2.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
 
   static String get gameUrl {
     return baseUrl.replaceAll(
@@ -279,6 +279,125 @@ class AuthService {
       },
     );
 
+    return jsonDecode(response.body);
+  }
+
+  // ===== COMUNIDADES =====
+
+  // Ver todas las comunidades
+  static Future<List<dynamic>> getCommunities() async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/communities'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Crear comunidad
+  static Future<Map<String, dynamic>> createCommunity({
+    required String name,
+    required String description,
+    required String type, // 'public' o 'private'
+    File? image,
+  }) async {
+    final token = await getToken();
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/communities'),
+    );
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'ngrok-skip-browser-warning': 'true',
+    });
+    request.fields['name'] = name;
+    request.fields['description'] = description;
+    request.fields['type'] = type;
+    if (image != null) {
+      request.files.add(await http.MultipartFile.fromPath('image', image.path));
+    }
+    final streamed = await request.send();
+    final response = await http.Response.fromStream(streamed);
+    return jsonDecode(response.body);
+  }
+
+  // Unirse a comunidad
+  static Future<Map<String, dynamic>> joinCommunity(int id) async {
+    final token = await getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/communities/$id/join'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Salir de comunidad
+  static Future<Map<String, dynamic>> leaveCommunity(int id) async {
+    final token = await getToken();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/communities/$id/leave'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Ver miembros
+  static Future<List<dynamic>> getCommunityMembers(int id) async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/communities/$id/members'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Ver mensajes del chat
+  static Future<List<dynamic>> getCommunityMessages(int id) async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/communities/$id/messages'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Enviar mensaje
+  static Future<Map<String, dynamic>> sendCommunityMessage({
+    required int communityId,
+    required String message,
+  }) async {
+    final token = await getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/communities/$communityId/messages'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: jsonEncode({'message': message}),
+    );
     return jsonDecode(response.body);
   }
 }
