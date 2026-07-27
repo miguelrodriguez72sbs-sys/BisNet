@@ -3,7 +3,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../services/auth_service.dart'; // ajusta el path si es diferente
 
 class GamesScreen extends StatefulWidget {
-  const GamesScreen({super.key});
+  final bool isGuest;
+  const GamesScreen({super.key, this.isGuest = false});
 
   @override
   State<GamesScreen> createState() => _GamesScreenState();

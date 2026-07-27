@@ -84,7 +84,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 letterSpacing: 1.2,
                               ),
                             ),

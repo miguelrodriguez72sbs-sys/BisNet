@@ -6,7 +6,7 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://e81cc284d899b2.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://fence-molecular-humanities-reef.trycloudflare.com/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
 
   static String get gameUrl {
     return baseUrl.replaceAll(
