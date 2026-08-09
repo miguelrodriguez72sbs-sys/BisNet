@@ -73,6 +73,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 // =========================================================================
+// WIDGET: AVATAR DE PERFIL (con foto real o ícono por defecto)
+// =========================================================================
+class _ProfileAvatar extends StatelessWidget {
+  final String? photoPath;
+
+  const _ProfileAvatar({required this.photoPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      child: ClipOval(
+        child: photoPath != null
+            ? Image.network(
+                '${AuthService.storageUrl}/$photoPath',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.person, color: Colors.black, size: 36),
+              )
+            : const Icon(Icons.person, color: Colors.black, size: 36),
+      ),
+    );
+  }
+}
+
+// =========================================================================
 // WIDGET: TARJETA DE INFORMACIÓN DE USUARIO
 // =========================================================================
 class UserInfoCard extends StatelessWidget {
@@ -94,7 +125,7 @@ class UserInfoCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.person, color: Colors.black, size: 36),
+              _ProfileAvatar(photoPath: user?['profile_photo']),
               const SizedBox(width: 8),
               Flexible(
                 child: Column(

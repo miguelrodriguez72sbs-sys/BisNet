@@ -94,6 +94,34 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 }
 
 // =========================================================================
+// WIDGET: AVATAR DEL AUTOR DE UN POST
+// =========================================================================
+class _AuthorAvatar extends StatelessWidget {
+  final String? photoPath;
+
+  const _AuthorAvatar({required this.photoPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+      child: ClipOval(
+        child: photoPath != null
+            ? Image.network(
+                '${AuthService.storageUrl}/$photoPath',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.person, color: Colors.black, size: 32),
+              )
+            : const Icon(Icons.person, color: Colors.black, size: 32),
+      ),
+    );
+  }
+}
+
+// =========================================================================
 // WIDGET: TARJETA DE PUBLICACIÓN
 // =========================================================================
 class PostCard extends StatefulWidget {
@@ -166,7 +194,7 @@ class _PostCardState extends State<PostCard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.person, color: Colors.black, size: 32),
+              _AuthorAvatar(photoPath: post['user']?['profile_photo']),
               const SizedBox(width: 12),
               Flexible(
                 child: Column(
@@ -222,7 +250,7 @@ class _PostCardState extends State<PostCard> {
                     'assets/Iconos compartidos/basura.png',
                     height: 24,
                     width: 24,
-                    errorBuilder: (_, __, ___) =>
+                    errorBuilder: (context, error, stackTrace) =>
                         const Icon(Icons.delete, color: Colors.black),
                   ),
                 ),
@@ -256,7 +284,7 @@ class _PostCardState extends State<PostCard> {
                 '${AuthService.storageUrl}/${post['media_path']}',
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(
+                errorBuilder: (context, error, stackTrace) => const Icon(
                   Icons.broken_image,
                   size: 64,
                   color: Colors.grey,
@@ -266,6 +294,7 @@ class _PostCardState extends State<PostCard> {
 
           const SizedBox(height: 12),
 
+          // ✅ Botón de like funcional
           GestureDetector(
             onTap: _handleLike,
             child: Row(

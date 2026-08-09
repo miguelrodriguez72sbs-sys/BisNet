@@ -6,7 +6,13 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://fence-molecular-humanities-reef.trycloudflare.com/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
+      'http://192.168.0.188:8000/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
+
+  // Credenciales de Pusher (deben coincidir con las del .env del backend)
+  static const String pusherKey = 'TU_PUSHER_APP_KEY';
+  static const String pusherCluster = 'mt1';
+
+  static String get broadcastAuthUrl => '$baseUrl/broadcasting/auth';
 
   static String get gameUrl {
     return baseUrl.replaceAll(
@@ -118,6 +124,33 @@ class AuthService {
         if (description != null) 'description': description,
       }),
     );
+
+    return jsonDecode(response.body);
+  }
+
+  // Subir / cambiar foto de perfil
+  static Future<Map<String, dynamic>> updateProfilePhoto(File photo) async {
+    final token = await getToken();
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/profile/photo'),
+    );
+
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'ngrok-skip-browser-warning': 'true',
+    });
+
+    request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode >= 400) {
+      throw Exception(response.body);
+    }
 
     return jsonDecode(response.body);
   }
@@ -252,6 +285,120 @@ class AuthService {
         'ngrok-skip-browser-warning': 'true',
       },
     );
+
+    return jsonDecode(response.body);
+  }
+
+  // Búsqueda global: usuarios, publicaciones y estadías
+  static Future<Map<String, dynamic>> search(String query) async {
+    final token = await getToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/search?q=${Uri.encodeQueryComponent(query)}'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+    // ===================== NOTIFICACIONES =====================
+
+  static Future<List<dynamic>> getNotifications() async {
+    final token = await getToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/notifications'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  static Future<void> markNotificationRead(int id) async {
+    final token = await getToken();
+
+    await http.post(
+      Uri.parse('$baseUrl/notifications/$id/read'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+  }
+
+  static Future<void> markAllNotificationsRead() async {
+    final token = await getToken();
+
+    await http.post(
+      Uri.parse('$baseUrl/notifications/read-all'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+  }
+
+  // ===================== CHAT =====================
+
+  static Future<List<dynamic>> getConversations() async {
+    final token = await getToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/messages/conversations'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  static Future<List<dynamic>> getMessages(int userId) async {
+    final token = await getToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/messages/$userId'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  static Future<Map<String, dynamic>> sendMessage(
+    int userId,
+    String body,
+  ) async {
+    final token = await getToken();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/messages/$userId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: jsonEncode({'body': body}),
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(response.body);
+    }
 
     return jsonDecode(response.body);
   }
