@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  webview_flutter: ^4.10.0
   flutter:
     sdk: flutter
   image_picker: ^1.0.7

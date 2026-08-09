@@ -28,27 +28,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF0D3C24),
+        titleSpacing: 8,
         title: Row(
           children: [
-            Image.asset('assets/Lechuzas/Logo.png', height: 40),
-            const SizedBox(width: 12),
-            const Text(
-              'Bisnet',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            Image.asset(
+              'assets/Lechuzas/Logo.png',
+              height: screenWidth < 360 ? 32 : 40, // logo se achica en pantallas pequeñas
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Bisnet',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
         ),
         actions: [
           NotificationBell(notificationCount: 1, onPressed: () {}),
-          CustomSearchBar(width: 150, onChanged: (value) {}),
+          CustomSearchBar(
+            width: screenWidth * 0.35, // antes: 150 fijo
+            onChanged: (value) {},
+          ),
           const SizedBox(width: 8),
         ],
       ),
@@ -88,3 +101,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
