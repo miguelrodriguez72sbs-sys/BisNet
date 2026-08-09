@@ -72,6 +72,13 @@ class AppLocalizations {
       'edit_profile': 'Editar perfil',
       'profile_updated_successfully': 'Perfil actualizado correctamente',
       'error_updating_profile': 'Error al actualizar el perfil',
+
+      // Juegos
+      'lechuza_game': 'Lechuza Corriendo',
+      'lechuza_game_desc': 'Ayuda a la lechuza a brincar los obstáculos',
+      'mathocean_game': 'MathOcean',
+      'mathocean_game_desc':
+          'Resuelve operaciones matemáticas en el fondo del mar',
     },
 
     'en': {
@@ -137,6 +144,12 @@ class AppLocalizations {
       'edit_profile': 'Edit Profile',
       'profile_updated_successfully': 'Profile updated successfully',
       'error_updating_profile': 'Error updating profile',
+
+      // Games
+      'lechuza_game': 'Running Owl',
+      'lechuza_game_desc': 'Help the owl jump over the obstacles',
+      'mathocean_game': 'MathOcean',
+      'mathocean_game_desc': 'Solve math operations under the sea',
     },
   };
 
@@ -198,6 +211,10 @@ class AppLocalizations {
   String get profileUpdatedSuccessfully =>
       translate('profile_updated_successfully');
   String get errorUpdatingProfile => translate('error_updating_profile');
+  String get lechuzaGame => translate('lechuza_game');
+  String get lechuzaGameDesc => translate('lechuza_game_desc');
+  String get mathoceanGame => translate('mathocean_game');
+  String get mathoceanGameDesc => translate('mathocean_game_desc');
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
