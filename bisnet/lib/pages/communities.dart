@@ -41,9 +41,10 @@ class _ComunidadesScreenState extends State<ComunidadesScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Nueva Comunidad'),
+        builder: (context) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            scrollable: true, //permite scroll en pantallas pequeñas
+            title: const Text('Nueva Comunidad'),
           content: SingleChildScrollView(
             //evita overflow
             child: Column(
@@ -66,7 +67,10 @@ class _ComunidadesScreenState extends State<ComunidadesScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text('Tipo: '),
                     ChoiceChip(
@@ -81,7 +85,6 @@ class _ComunidadesScreenState extends State<ComunidadesScreen> {
                             : Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 8),
                     ChoiceChip(
                       label: const Text('Privada'),
                       selected: selectedType == 'private',
