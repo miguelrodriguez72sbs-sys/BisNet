@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/widgets/search_bar.dart';
 import 'package:bisnet/widgets/notifications_bell.dart';
+import 'package:bisnet/pages/notifications.dart';
 import 'package:bisnet/pages/post.dart';
 import 'package:bisnet/pages/games.dart';
 import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
+import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,9 +20,44 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  String _searchQuery = '';
+  int _notificationCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationCount();
+  }
+
+  Future<void> _loadNotificationCount() async {
+    if (widget.isGuest) return;
+    try {
+      final count = await AuthService.getUnreadNotificationsCount();
+      if (!mounted) return;
+      setState(() => _notificationCount = count);
+    } catch (e) {
+      // sin conexión o sesión expirada: se mantiene el conteo anterior
+    }
+  }
+
+  Future<void> _openNotifications() async {
+    final t = AppLocalizations.of(context)!;
+    if (widget.isGuest) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.loginRequired)));
+      return;
+    }
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+    );
+    _loadNotificationCount();
+  }
 
   List<Widget> get _pages => [
-    HomeFeedScreen(isGuest: widget.isGuest),
+    HomeFeedScreen(isGuest: widget.isGuest, searchQuery: _searchQuery),
     EstadiasScreen(isGuest: widget.isGuest),
     const PostScreen(),
     GamesScreen(isGuest: widget.isGuest),
@@ -59,10 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          NotificationBell(notificationCount: 1, onPressed: () {}),
+          NotificationBell(
+            notificationCount: widget.isGuest ? 0 : _notificationCount,
+            onPressed: _openNotifications,
+          ),
           CustomSearchBar(
             width: screenWidth * 0.35, // antes: 150 fijo
-            onChanged: (value) {},
+            onChanged: (value) => setState(() => _searchQuery = value),
           ),
           const SizedBox(width: 8),
         ],

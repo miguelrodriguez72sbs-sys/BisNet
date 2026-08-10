@@ -407,4 +407,60 @@ class AuthService {
     );
     return jsonDecode(response.body);
   }
+
+  // ===== NOTIFICACIONES =====
+
+  // Ver mis notificaciones
+  static Future<List<dynamic>> getNotifications() async {
+    final token = await getToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/notifications'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  // Marcar una notificación como leída
+  static Future<Map<String, dynamic>> markNotificationRead(int id) async {
+    final token = await getToken();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/notifications/$id/read'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  // Marcar todas las notificaciones como leídas
+  static Future<Map<String, dynamic>> markAllNotificationsRead() async {
+    final token = await getToken();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/notifications/read-all'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  // Contar notificaciones no leídas
+  static Future<int> getUnreadNotificationsCount() async {
+    final notifications = await getNotifications();
+    return notifications.where((n) => n['read_at'] == null).length;
+  }
 }

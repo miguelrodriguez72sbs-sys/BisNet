@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/pages/login.dart';
 import 'package:bisnet/pages/edit_profile.dart';
+import 'package:bisnet/pages/notifications.dart';
 
 class ProfileScreen extends StatefulWidget {
   final bool isGuest;
@@ -74,13 +75,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const Spacer(),
-                  Image.asset(
-                    'assets/Iconos_movil/Notificacion.png',
-                    height: 24,
-                    width: 24,
-                    color: Colors.white,
-                    errorBuilder: (_, _, _) =>
-                        const Icon(Icons.notifications, color: Colors.white),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/Iconos_movil/Notificacion.png',
+                      height: 24,
+                      width: 24,
+                      color: Colors.white,
+                      errorBuilder: (_, _, _) =>
+                          const Icon(Icons.notifications, color: Colors.white),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Container(

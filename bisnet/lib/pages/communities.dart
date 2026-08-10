@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/pages/community_detail.dart';
-import 'dart:io';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class ComunidadesScreen extends StatefulWidget {
   const ComunidadesScreen({super.key});
@@ -13,11 +13,29 @@ class ComunidadesScreen extends StatefulWidget {
 class _ComunidadesScreenState extends State<ComunidadesScreen> {
   List<dynamic> _communities = [];
   bool _loading = true;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _loadCommunities();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<dynamic> get _visibleCommunities {
+    final query = _searchQuery.toLowerCase().trim();
+    if (query.isEmpty) return _communities;
+    return _communities.where((community) {
+      final name = (community['name'] ?? '').toString().toLowerCase();
+      final description = (community['description'] ?? '').toString().toLowerCase();
+      return name.contains(query) || description.contains(query);
+    }).toList();
   }
 
   Future<void> _loadCommunities() async {
@@ -171,52 +189,95 @@ class _ComunidadesScreenState extends State<ComunidadesScreen> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : _communities.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.group, size: 80, color: Color(0xFF488C61)),
-                  SizedBox(height: 16),
-                  Text(
-                    'No hay comunidades aún',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Crea la primera comunidad con el botón +',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadCommunities,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: _communities.length,
-                itemBuilder: (context, index) {
-                  final community = _communities[index];
-                  return CommunityCard(
-                    community: community,
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              CommunityDetailScreen(community: community),
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) =>
+                        setState(() => _searchQuery = value),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.search,
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Color(0xFF488C61),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF488C61),
+                          width: 1.5,
                         ),
-                      );
-                      _loadCommunities();
-                    },
-                    onJoin: () async {
-                      await AuthService.joinCommunity(community['id']);
-                      _loadCommunities();
-                    },
-                  );
-                },
-              ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF488C61),
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: _visibleCommunities.isEmpty
+                      ? Center(
+                          child: Text(
+                            _searchQuery.isNotEmpty
+                                ? AppLocalizations.of(context)!
+                                    .noCommunitiesResults
+                                : 'No hay comunidades aún',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _loadCommunities,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: _visibleCommunities.length,
+                            itemBuilder: (context, index) {
+                              final community =
+                                  _visibleCommunities[index];
+                              return CommunityCard(
+                                community: community,
+                                onTap: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          CommunityDetailScreen(
+                                              community: community),
+                                    ),
+                                  );
+                                  _loadCommunities();
+                                },
+                                onJoin: () async {
+                                  await AuthService.joinCommunity(
+                                      community['id']);
+                                  _loadCommunities();
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
             ),
     );
   }

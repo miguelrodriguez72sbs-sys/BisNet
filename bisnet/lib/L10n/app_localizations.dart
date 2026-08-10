@@ -79,6 +79,21 @@ class AppLocalizations {
       'mathocean_game': 'MathOcean',
       'mathocean_game_desc':
           'Resuelve operaciones matemáticas en el fondo del mar',
+
+      // Notificaciones
+      'notifications': 'Notificaciones',
+      'mark_all_read': 'Marcar todas como leídas',
+      'no_notifications': 'No tienes notificaciones',
+      'just_now': 'Ahora',
+      'min_ago': 'min',
+      'hours_ago': 'h',
+      'days_ago': 'd',
+      'liked_your_post': 'dio like a tu publicación',
+      'sent_you_a_message': 'te envió un mensaje',
+
+      // Búsqueda
+      'no_search_results': 'No se encontraron publicaciones',
+      'no_communities_results': 'No se encontraron comunidades',
     },
 
     'en': {
@@ -150,6 +165,21 @@ class AppLocalizations {
       'lechuza_game_desc': 'Help the owl jump over the obstacles',
       'mathocean_game': 'MathOcean',
       'mathocean_game_desc': 'Solve math operations under the sea',
+
+      // Notifications
+      'notifications': 'Notifications',
+      'mark_all_read': 'Mark all as read',
+      'no_notifications': 'You have no notifications',
+      'just_now': 'Just now',
+      'min_ago': 'min',
+      'hours_ago': 'h',
+      'days_ago': 'd',
+      'liked_your_post': 'liked your post',
+      'sent_you_a_message': 'sent you a message',
+
+      // Search
+      'no_search_results': 'No posts found',
+      'no_communities_results': 'No communities found',
     },
   };
 
@@ -215,6 +245,17 @@ class AppLocalizations {
   String get lechuzaGameDesc => translate('lechuza_game_desc');
   String get mathoceanGame => translate('mathocean_game');
   String get mathoceanGameDesc => translate('mathocean_game_desc');
+  String get notifications => translate('notifications');
+  String get markAllRead => translate('mark_all_read');
+  String get noNotifications => translate('no_notifications');
+  String get justNow => translate('just_now');
+  String get minAgo => translate('min_ago');
+  String get hoursAgo => translate('hours_ago');
+  String get daysAgo => translate('days_ago');
+  String get likedYourPost => translate('liked_your_post');
+  String get sentYouAMessage => translate('sent_you_a_message');
+  String get noSearchResults => translate('no_search_results');
+  String get noCommunitiesResults => translate('no_communities_results');
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

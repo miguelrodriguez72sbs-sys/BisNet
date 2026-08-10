@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/pages/communities.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   final bool isGuest;
-  const HomeFeedScreen({super.key, this.isGuest = false});
+  final String searchQuery;
+
+  const HomeFeedScreen({super.key, this.isGuest = false, this.searchQuery = ''});
 
   @override
   State<HomeFeedScreen> createState() => _HomeFeedScreenState();
@@ -52,20 +55,34 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     );
   }
 
+  List<dynamic> get _visiblePosts {
+    final query = widget.searchQuery.toLowerCase().trim();
+    if (query.isEmpty) return _posts;
+    return _posts.where((post) {
+      final title = (post['title'] ?? '').toString().toLowerCase();
+      final description = (post['description'] ?? '').toString().toLowerCase();
+      return title.contains(query) || description.contains(query);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final visiblePosts = _visiblePosts;
+
     return Scaffold(
       floatingActionButton: _buildFAB(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _posts.isEmpty
-          ? const Center(
+      body: visiblePosts.isEmpty
+          ? Center(
               child: Text(
-                'No hay publicaciones aún',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                widget.searchQuery.isNotEmpty
+                    ? AppLocalizations.of(context)!.noSearchResults
+                    : 'No hay publicaciones aún',
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             )
           : RefreshIndicator(
@@ -75,9 +92,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                   horizontal: 16,
                   vertical: 12,
                 ),
-                itemCount: _posts.length,
+                itemCount: visiblePosts.length,
                 itemBuilder: (context, index) {
-                  final post = _posts[index];
+                  final post = visiblePosts[index];
                   return PostCard(
                     post: post,
                     currentUser: _currentUser,
