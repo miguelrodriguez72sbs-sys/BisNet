@@ -58,38 +58,40 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    if (_posts.isEmpty) {
+      return Scaffold(
+        floatingActionButton: _buildFAB(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        body: const Center(
+          child: Text(
+            'No hay publicaciones aún',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       floatingActionButton: _buildFAB(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _posts.isEmpty
-          ? const Center(
-              child: Text(
-                'No hay publicaciones aún',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadData,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                itemCount: _posts.length,
-                itemBuilder: (context, index) {
-                  final post = _posts[index];
-                  return PostCard(
-                    post: post,
-                    currentUser: _currentUser,
-                    isGuest: widget.isGuest,
-                    onDelete: () async {
-                      await AuthService.deletePost(post['id']);
-                      _loadData();
-                    },
-                  );
-                },
-              ),
-            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: _posts.length,
+          itemBuilder: (context, index) {
+            final post = _posts[index];
+            return PostCard(
+              post: post,
+              currentUser: _currentUser,
+              onDelete: () async {
+                await AuthService.deletePost(post['id']);
+                _loadData();
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -169,7 +171,7 @@ class _PostCardState extends State<PostCard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.person, color: Colors.black, size: 32),
+              _AuthorAvatar(photoPath: post['user']?['profile_photo']),
               const SizedBox(width: 12),
               Flexible(
                 child: Column(
@@ -225,7 +227,7 @@ class _PostCardState extends State<PostCard> {
                     'assets/Iconos compartidos/basura.png',
                     height: 24,
                     width: 24,
-                    errorBuilder: (_, __, ___) =>
+                    errorBuilder: (context, error, stackTrace) =>
                         const Icon(Icons.delete, color: Colors.black),
                   ),
                 ),
@@ -259,7 +261,7 @@ class _PostCardState extends State<PostCard> {
                 '${AuthService.storageUrl}/${post['media_path']}',
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(
+                errorBuilder: (context, error, stackTrace) => const Icon(
                   Icons.broken_image,
                   size: 64,
                   color: Colors.grey,
@@ -269,6 +271,7 @@ class _PostCardState extends State<PostCard> {
 
           const SizedBox(height: 12),
 
+          // ✅ Botón de like funcional
           GestureDetector(
             onTap: widget.isGuest ? null : _handleLike,
             child: Row(

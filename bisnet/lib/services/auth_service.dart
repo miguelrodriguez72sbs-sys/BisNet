@@ -6,7 +6,13 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://fence-molecular-humanities-reef.trycloudflare.com/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
+      'http://192.168.0.188:8000/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
+
+  // Credenciales de Pusher (deben coincidir con las del .env del backend)
+  static const String pusherKey = 'TU_PUSHER_APP_KEY';
+  static const String pusherCluster = 'mt1';
+
+  static String get broadcastAuthUrl => '$baseUrl/broadcasting/auth';
 
   static String get gameUrl {
     return baseUrl.replaceAll(
@@ -125,6 +131,33 @@ class AuthService {
         if (description != null) 'description': description,
       }),
     );
+
+    return jsonDecode(response.body);
+  }
+
+  // Subir / cambiar foto de perfil
+  static Future<Map<String, dynamic>> updateProfilePhoto(File photo) async {
+    final token = await getToken();
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/profile/photo'),
+    );
+
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'ngrok-skip-browser-warning': 'true',
+    });
+
+    request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode >= 400) {
+      throw Exception(response.body);
+    }
 
     return jsonDecode(response.body);
   }
