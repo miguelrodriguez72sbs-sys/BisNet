@@ -186,7 +186,27 @@ class _PostCardState extends State<PostCard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.person, color: Colors.black, size: 32),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: const Color(0xFF488C61),
+                child: (post['user']?['profile_photo'] ?? '')
+                        .toString()
+                        .isNotEmpty
+                    ? ClipOval(
+                        child: Image.network(
+                          '${AuthService.storageUrl}/${post['user']?['profile_photo']}',
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => const Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      )
+                    : const Icon(Icons.person, color: Colors.white, size: 20),
+              ),
               const SizedBox(width: 12),
               Flexible(
                 child: Column(
