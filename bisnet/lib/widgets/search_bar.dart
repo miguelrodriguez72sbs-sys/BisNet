@@ -3,15 +3,9 @@ import 'package:bisnet/L10n/app_localizations.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
   final double width;
 
-  const CustomSearchBar({
-    super.key,
-    this.onChanged,
-    this.onSubmitted,
-    this.width = 150,
-  });
+  const CustomSearchBar({super.key, this.onChanged, this.width = 150});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +14,6 @@ class CustomSearchBar extends StatelessWidget {
       width: width,
       child: TextField(
         onChanged: onChanged,
-        onSubmitted: onSubmitted,
-        textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: t.search,
 

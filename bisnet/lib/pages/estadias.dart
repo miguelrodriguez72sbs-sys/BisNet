@@ -35,7 +35,7 @@ class _EstadiasScreenState extends State<EstadiasScreen> {
         _loading = false;
       });
     } catch (e) {
-      setState(() => _loading = false); //Arreglar error de carga de estadías
+      setState(() => _loading = false);
     }
   }
 

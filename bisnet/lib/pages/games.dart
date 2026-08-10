@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../services/auth_service.dart'; // ajusta el path si es diferente
+import '../services/auth_service.dart';
+import '../L10n/app_localizations.dart';
 
 class GamesScreen extends StatefulWidget {
   final bool isGuest;
@@ -147,6 +148,7 @@ class _GameWebViewScreenState extends State<_GameWebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F4),
       body: SafeArea(
         child: Stack(
           children: [

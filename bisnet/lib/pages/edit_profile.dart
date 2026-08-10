@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
 
@@ -18,10 +16,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController careerController;
   late TextEditingController descriptionController;
 
-  File? _selectedPhoto;
-  String? _currentPhotoPath;
-  bool _uploadingPhoto = false;
-
   @override
   void initState() {
     super.initState();
@@ -32,7 +26,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     descriptionController = TextEditingController(
       text: widget.user?['description'] ?? '',
     );
-    _currentPhotoPath = widget.user?['profile_photo'];
   }
 
   @override
@@ -42,51 +35,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     descriptionController.dispose();
     super.dispose();
   }
-
-  Future<void> _pickAndUploadPhoto() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
-
-    setState(() {
-      _selectedPhoto = File(picked.path);
-      _uploadingPhoto = true;
-    });
-
-    try {
-      final response = await AuthService.updateProfilePhoto(_selectedPhoto!);
-      if (response.containsKey('user')) {
-        setState(() {
-          _currentPhotoPath = response['user']['profile_photo'];
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Foto actualizada')));
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response['message'] ?? 'No se pudo subir la foto'),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
-    } finally {
-      if (mounted) setState(() => _uploadingPhoto = false);
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -150,74 +98,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   const SizedBox(height: 24),
 
-                  // FOTO DE PERFIL
-                  Center(
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF488C61),
-                              width: 2,
-                            ),
-                            color: const Color(0xFFEFEFEF),
-                          ),
-                          child: ClipOval(
-                            child: _selectedPhoto != null
-                                ? Image.file(_selectedPhoto!, fit: BoxFit.cover)
-                                : (_currentPhotoPath != null
-                                      ? Image.network(
-                                          '${AuthService.storageUrl}/$_currentPhotoPath',
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (c, e, s) => const Icon(
-                                            Icons.person,
-                                            size: 56,
-                                            color: Color(0xFF488C61),
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.person,
-                                          size: 56,
-                                          color: Color(0xFF488C61),
-                                        )),
-                          ),
-                        ),
-                        if (_uploadingPhoto)
-                          const Positioned.fill(
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            ),
-                          ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: _uploadingPhoto ? null : _pickAndUploadPhoto,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFF488C61),
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                size: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-                  
                   Text(
                     t.editProfile,
                     style: const TextStyle(
