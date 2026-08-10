@@ -77,10 +77,22 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileScreen(isGuest: widget.isGuest),
   ];
 
+  void _onNavTap(int index) {
+    final t = AppLocalizations.of(context)!;
+    if (widget.isGuest && index != 0) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.loginRequired)));
+      return;
+    }
+    setState(() => _currentIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 800;
 
     return Scaffold(
       appBar: AppBar(
@@ -114,49 +126,93 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: _openNotifications,
           ),
           CustomSearchBar(
-            width: screenWidth * 0.35, // antes: 150 fijo
+            width: (screenWidth * 0.35).clamp(0.0, 300.0),
             onChanged: (value) => setState(() => _searchQuery = value),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF488C61),
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          if (widget.isGuest && index != 0) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(t.loginRequired)));
-            return;
-          }
+      // En escritorio se usa navegación lateral; en móvil, barra inferior
+      body: isWide ? _buildWideBody(t) : _pages[_currentIndex],
+      bottomNavigationBar: isWide ? null : _buildBottomNav(t),
+    );
+  }
 
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.home), label: t.home),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.apartment),
-            label: t.stays,
+  Widget _buildWideBody(AppLocalizations t) {
+    return Row(
+      children: [
+        NavigationRail(
+          backgroundColor: const Color(0xFF0D3C24),
+          selectedIndex: _currentIndex,
+          onDestinationSelected: _onNavTap,
+          selectedIconTheme: const IconThemeData(color: Colors.white),
+          unselectedIconTheme: const IconThemeData(color: Colors.white70),
+          selectedLabelTextStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.add_box),
-            label: t.post,
+          unselectedLabelTextStyle: const TextStyle(color: Colors.white70),
+          destinations: [
+            NavigationRailDestination(
+              icon: const Icon(Icons.home),
+              label: Text(t.home),
+            ),
+            NavigationRailDestination(
+              icon: const Icon(Icons.apartment),
+              label: Text(t.stays),
+            ),
+            NavigationRailDestination(
+              icon: const Icon(Icons.add_box),
+              label: Text(t.post),
+            ),
+            NavigationRailDestination(
+              icon: const Icon(Icons.sports_esports),
+              label: Text(t.plays),
+            ),
+            NavigationRailDestination(
+              icon: const Icon(Icons.person),
+              label: Text(t.profile),
+            ),
+          ],
+        ),
+        const VerticalDivider(thickness: 1, width: 1),
+        Expanded(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 900),
+              child: _pages[_currentIndex],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.sports_esports),
-            label: t.plays,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: t.profile,
-          ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomNav(AppLocalizations t) {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      selectedItemColor: const Color(0xFF488C61),
+      unselectedItemColor: Colors.grey,
+      onTap: _onNavTap,
+      items: [
+        BottomNavigationBarItem(icon: const Icon(Icons.home), label: t.home),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.apartment),
+          label: t.stays,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.add_box),
+          label: t.post,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.sports_esports),
+          label: t.plays,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.person),
+          label: t.profile,
+        ),
+      ],
     );
   }
 }
