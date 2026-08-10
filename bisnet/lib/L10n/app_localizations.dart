@@ -94,6 +94,14 @@ class AppLocalizations {
       // Búsqueda
       'no_search_results': 'No se encontraron publicaciones',
       'no_communities_results': 'No se encontraron comunidades',
+
+      // Perfil / Foto
+      'tap_to_change_photo': 'Toca para cambiar la foto',
+
+      // Notificaciones de comunidad
+      'user_joined_community': 'se unió a tu comunidad',
+      'user_requested_join': 'solicitó unirse a tu comunidad',
+      'sent_message_in': 'envió un mensaje en',
     },
 
     'en': {
@@ -180,6 +188,14 @@ class AppLocalizations {
       // Search
       'no_search_results': 'No posts found',
       'no_communities_results': 'No communities found',
+
+      // Profile / Photo
+      'tap_to_change_photo': 'Tap to change photo',
+
+      // Community notifications
+      'user_joined_community': 'joined your community',
+      'user_requested_join': 'requested to join your community',
+      'sent_message_in': 'sent a message in',
     },
   };
 
@@ -256,6 +272,10 @@ class AppLocalizations {
   String get sentYouAMessage => translate('sent_you_a_message');
   String get noSearchResults => translate('no_search_results');
   String get noCommunitiesResults => translate('no_communities_results');
+  String get tapToChangePhoto => translate('tap_to_change_photo');
+  String get userJoinedCommunity => translate('user_joined_community');
+  String get userRequestedJoin => translate('user_requested_join');
+  String get sentMessageIn => translate('sent_message_in');
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

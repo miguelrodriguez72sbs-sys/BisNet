@@ -129,6 +129,27 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
+  // Subir / cambiar foto de perfil
+  static Future<Map<String, dynamic>> updateProfilePhoto(File photo) async {
+    final token = await getToken();
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/profile/photo'),
+    );
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'ngrok-skip-browser-warning': 'true',
+    });
+    request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    return jsonDecode(response.body);
+  }
+
   // Obtener perfil
   static Future<Map<String, dynamic>> getProfile() async {
     final token = await getToken();

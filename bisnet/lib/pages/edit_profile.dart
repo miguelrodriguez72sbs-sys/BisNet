@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
 
@@ -15,6 +17,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController nameController;
   late TextEditingController careerController;
   late TextEditingController descriptionController;
+  File? _selectedImage;
+  bool _uploading = false;
 
   @override
   void initState() {
@@ -34,6 +38,74 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     careerController.dispose();
     descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+    setState(() => _selectedImage = File(image.path));
+  }
+
+  Widget _buildProfilePhoto() {
+    final currentPhoto = widget.user?['profile_photo'];
+
+    Widget avatar;
+    if (_selectedImage != null) {
+      avatar = ClipOval(
+        child: Image.file(_selectedImage!, fit: BoxFit.cover, width: 96, height: 96),
+      );
+    } else if (currentPhoto != null && currentPhoto.toString().isNotEmpty) {
+      avatar = ClipOval(
+        child: Image.network(
+          '${AuthService.storageUrl}/$currentPhoto',
+          fit: BoxFit.cover,
+          width: 96,
+          height: 96,
+          errorBuilder: (_, _, _) => const Icon(
+            Icons.person,
+            size: 48,
+            color: Color(0xFF488C61),
+          ),
+        ),
+      );
+    } else {
+      avatar = const Icon(Icons.person, size: 48, color: Color(0xFF488C61));
+    }
+
+    return GestureDetector(
+      onTap: _pickImage,
+      child: Stack(
+        children: [
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFFD9D9D9),
+              border: Border.all(color: const Color(0xFF488C61), width: 2),
+            ),
+            child: Center(child: avatar),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: Color(0xFF488C61),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+                size: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -106,6 +178,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
 
+                  const SizedBox(height: 24),
+
+                  // FOTO DE PERFIL
+                  Center(child: _buildProfilePhoto()),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      t.tapToChangePhoto,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 24),
 
                   // NAME
@@ -219,37 +305,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () async {
-                        try {
-                          final response = await AuthService.updateProfile(
-                            name: nameController.text,
-                            career: careerController.text,
-                            description: descriptionController.text,
-                          );
+                      onPressed: _uploading
+                          ? null
+                          : () async {
+                              setState(() => _uploading = true);
+                              try {
+                                Map<String, dynamic> updatedUser =
+                                    widget.user ?? {};
 
-                          if (response.containsKey('user')) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(t.profileUpdatedSuccessfully),
-                              ),
-                            );
+                                // 1) Subir foto si se eligió una
+                                if (_selectedImage != null) {
+                                  final photoResponse =
+                                      await AuthService.updateProfilePhoto(
+                                    _selectedImage!,
+                                  );
+                                  if (photoResponse.containsKey('user')) {
+                                    updatedUser = photoResponse['user'];
+                                  }
+                                }
 
-                            Navigator.pop(context, response['user']);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  response['message'] ?? t.errorUpdatingProfile,
-                                ),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${t.error}: $e')),
-                          );
-                        }
-                      },
+                                // 2) Actualizar nombre/carrera/descripción
+                                final response = await AuthService.updateProfile(
+                                  name: nameController.text,
+                                  career: careerController.text,
+                                  description: descriptionController.text,
+                                );
+
+                                if (response.containsKey('user')) {
+                                  updatedUser = response['user'];
+                                }
+
+                                if (!mounted) return;
+                                setState(() => _uploading = false);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      t.profileUpdatedSuccessfully,
+                                    ),
+                                  ),
+                                );
+                                Navigator.pop(context, updatedUser);
+                              } catch (e) {
+                                if (!mounted) return;
+                                setState(() => _uploading = false);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${t.error}: $e'),
+                                  ),
+                                );
+                              }
+                            },
                       child: Text(
                         t.save,
                         style: const TextStyle(

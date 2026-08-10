@@ -162,6 +162,10 @@ class _NotificationTile extends StatelessWidget {
     final preview = data is Map
         ? (data['preview'] ?? data['message'] ?? '').toString()
         : '';
+    final communityName = data is Map
+        ? (data['community_name'] ?? '').toString()
+        : '';
+    final approved = data is Map && data['approved'] == true;
 
     final IconData icon;
     final String actionText;
@@ -174,10 +178,22 @@ class _NotificationTile extends StatelessWidget {
         icon = Icons.chat_bubble;
         actionText = t.sentYouAMessage;
         break;
+      case 'community_join':
+        icon = Icons.group_add;
+        actionText = approved ? t.userJoinedCommunity : t.userRequestedJoin;
+        break;
+      case 'community_message':
+        icon = Icons.forum;
+        actionText = t.sentMessageIn;
+        break;
       default:
         icon = Icons.notifications;
         actionText = '';
     }
+
+    final String title = type == 'community_message' && communityName.isNotEmpty
+        ? '$fromName ${t.sentMessageIn} $communityName'
+        : '$fromName $actionText';
 
     return GestureDetector(
       onTap: onTap,
@@ -202,7 +218,7 @@ class _NotificationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$fromName $actionText',
+                    title,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: isUnread

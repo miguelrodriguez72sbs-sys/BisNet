@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:bisnet/widgets/search_bar.dart';
 import 'package:bisnet/widgets/notifications_bell.dart';
@@ -22,11 +23,23 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   String _searchQuery = '';
   int _notificationCount = 0;
+  Timer? _notificationTimer;
 
   @override
   void initState() {
     super.initState();
     _loadNotificationCount();
+    // Refresca el conteo cada 20s para recibir nuevas notificaciones
+    _notificationTimer = Timer.periodic(
+      const Duration(seconds: 20),
+      (_) => _loadNotificationCount(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _notificationTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadNotificationCount() async {

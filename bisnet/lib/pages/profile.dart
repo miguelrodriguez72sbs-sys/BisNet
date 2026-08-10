@@ -25,16 +25,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadData() async {
     try {
-      final data  = await AuthService.getProfile();
+      final data = await AuthService.getProfile();
       final posts = await AuthService.getMyPosts();
       setState(() {
-        _user    = data;
-        _posts   = posts;
+        _user = data;
+        _posts = posts;
         _loading = false;
       });
     } catch (e) {
       setState(() => _loading = false);
     }
+  }
+
+  void _onUserUpdated(Map<String, dynamic> updatedUser) {
+    setState(() => _user = updatedUser);
   }
 
   @override
@@ -120,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       children: [
-                        UserInfoCard(user: _user),
+                        UserInfoCard(user: _user, onUserUpdated: _onUserUpdated),
                         const SizedBox(height: 12),
                         ..._posts.map(
                           (post) => UserPostCard(
@@ -183,8 +187,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 // =========================================================================
 class UserInfoCard extends StatelessWidget {
   final Map<String, dynamic>? user;
+  final ValueChanged<Map<String, dynamic>>? onUserUpdated;
 
-  const UserInfoCard({super.key, required this.user});
+  const UserInfoCard({super.key, required this.user, this.onUserUpdated});
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +205,22 @@ class UserInfoCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.person, color: Colors.black, size: 36),
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: const Color(0xFF488C61),
+                child: (user?['profile_photo'] ?? '').toString().isNotEmpty
+                    ? ClipOval(
+                        child: Image.network(
+                          '${AuthService.storageUrl}/${user?['profile_photo']}',
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) =>
+                              const Icon(Icons.person, color: Colors.white),
+                        ),
+                      )
+                    : const Icon(Icons.person, color: Colors.white, size: 24),
+              ),
               const SizedBox(width: 8),
               // ── Mejora del Archivo 2: Flexible evita overflow en textos largos ──
               Flexible(
@@ -238,7 +258,7 @@ class UserInfoCard extends StatelessWidget {
                         ),
                       );
                       if (updatedUser != null) {
-                        (context as Element).markNeedsBuild();
+                        onUserUpdated?.call(updatedUser);
                       }
                     },
                     child: Image.asset(
@@ -412,9 +432,9 @@ class UserPostCard extends StatelessWidget {
                     const Icon(Icons.star_border, color: Colors.black),
               ),
               const SizedBox(width: 8),
-              const Text(
-                '0',
-                style: TextStyle(
+              Text(
+                '${post['likes_count'] ?? 0}',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
