@@ -7,9 +7,7 @@ import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
 import 'package:bisnet/services/auth_service.dart';
-import 'package:bisnet/services/realtime_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
-import 'package:laravel_reverb/laravel_reverb.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -21,8 +19,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  int _notificationCount = 0;
-  Subscription? _notifSubscription;
 
   List<Widget> get _pages => [
     HomeFeedScreen(isGuest: widget.isGuest),
@@ -33,56 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _initNotifications();
-  }
-
-  Future<void> _initNotifications() async {
-    if (widget.isGuest) return;
-
-    try {
-      final user = await AuthService.getProfile();
-      if (!mounted) return;
-      final id = user['id'];
-      if (id is! int) return;
-
-      // Conteo inicial de notificaciones no leídas
-      try {
-        final notifications = await AuthService.getNotifications();
-        if (!mounted) return;
-        final unread = notifications
-            .where((n) => n['read_at'] == null)
-            .length;
-        setState(() => _notificationCount = unread);
-      } catch (_) {}
-
-      // Suscripción en tiempo real al canal privado del usuario
-      final reverb = await RealtimeService.instance.ensureConnected();
-      if (!mounted) return;
-
-      _notifSubscription?.cancel();
-      _notifSubscription = reverb
-          .private('notifications.$id')
-          .listen('.notification.created', (data) {
-            if (!mounted) return;
-            setState(() => _notificationCount++);
-          });
-    } catch (e) {
-      debugPrint('No se pudo conectar notificaciones en tiempo real: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    _notifSubscription?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,10 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          NotificationBell(
-            notificationCount: _notificationCount,
-            onPressed: () {},
-          ),
+          NotificationBell(notificationCount: 1, onPressed: () {}),
           CustomSearchBar(
             width: screenWidth * 0.35, // antes: 150 fijo
             onChanged: (value) {},

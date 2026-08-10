@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
-import 'package:bisnet/services/realtime_service.dart';
 import 'package:bisnet/pages/login.dart';
 import 'package:bisnet/pages/edit_profile.dart';
 
@@ -254,7 +253,6 @@ class UserInfoCard extends StatelessWidget {
                   const SizedBox(width: 16),
                   GestureDetector(
                     onTap: () async {
-                      await RealtimeService.instance.disconnectForLogout();
                       await AuthService.deleteToken();
                       Navigator.pushAndRemoveUntil(
                         context,
