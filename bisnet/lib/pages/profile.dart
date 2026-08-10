@@ -60,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'assets/Lechuzas/Logo.png',
                     height: 40,
                     width: 40,
-                    errorBuilder: (_, __, ___) =>
+                    errorBuilder: (_, _, _) =>
                         const Icon(Icons.account_circle, color: Colors.white, size: 40),
                   ),
                   const SizedBox(width: 12),
@@ -79,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 24,
                     width: 24,
                     color: Colors.white,
-                    errorBuilder: (_, __, ___) =>
+                    errorBuilder: (_, _, _) =>
                         const Icon(Icons.notifications, color: Colors.white),
                   ),
                   const SizedBox(width: 12),
@@ -149,26 +149,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Image.asset('assets/Iconos_movil/home.png',
-                      height: 32, width: 32, color: Colors.white,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.home, color: Colors.white, size: 32)),
-                  Image.asset('assets/Iconos_movil/Estadias.png',
-                      height: 32, width: 32, color: Colors.white,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.business, color: Colors.white, size: 32)),
-                  Image.asset('assets/Iconos_movil/Publicar.png',
-                      height: 32, width: 32, color: Colors.white,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.add_circle_outline, color: Colors.white, size: 32)),
-                  Image.asset('assets/Iconos_movil/Juegos.png',
-                      height: 32, width: 32, color: Colors.white,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.sports_esports, color: Colors.white, size: 32)),
-                  Image.asset('assets/Iconos_movil/usuario seleccionado.png',
-                      height: 32, width: 32, color: Colors.white,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.person, color: Colors.white, size: 32)),
+                  const _NavIcon(asset: 'assets/Iconos_movil/home.png', fallback: Icons.home),
+                  const _NavIcon(asset: 'assets/Iconos_movil/Estadias.png', fallback: Icons.business),
+                  const _NavIcon(asset: 'assets/Iconos_movil/Publicar.png', fallback: Icons.add_circle_outline),
+                  const _NavIcon(asset: 'assets/Iconos_movil/Juegos.png', fallback: Icons.sports_esports),
+                  const _NavIcon(
+                    asset: 'assets/Iconos_movil/usuario seleccionado.png',
+                    fallback: Icons.person,
+                  ),
                 ],
               ),
             ),
@@ -425,6 +413,27 @@ class UserPostCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// =========================================================================
+// WIDGET: ÍCONO DE LA BARRA DE NAVEGACIÓN INFERIOR (con fallback)
+// =========================================================================
+class _NavIcon extends StatelessWidget {
+  final String asset;
+  final IconData fallback;
+
+  const _NavIcon({required this.asset, required this.fallback});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      asset,
+      height: 32,
+      width: 32,
+      color: Colors.white,
+      errorBuilder: (_, _, _) => Icon(fallback, color: Colors.white, size: 32),
     );
   }
 }
