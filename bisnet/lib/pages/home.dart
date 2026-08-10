@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   List<Widget> get _pages => [
-    const HomeFeedScreen(),
+    HomeFeedScreen(isGuest: widget.isGuest),
     EstadiasScreen(isGuest: widget.isGuest),
     const PostScreen(),
     GamesScreen(isGuest: widget.isGuest),
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: const Color(0xFF488C61),
         unselectedItemColor: Colors.grey,
         onTap: (index) {
-          if (widget.isGuest && [1, 2, 3].contains(index)) {
+          if (widget.isGuest && index != 0) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(t.loginRequired)));

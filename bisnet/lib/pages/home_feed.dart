@@ -3,7 +3,8 @@ import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/pages/communities.dart';
 
 class HomeFeedScreen extends StatefulWidget {
-  const HomeFeedScreen({super.key});
+  final bool isGuest;
+  const HomeFeedScreen({super.key, this.isGuest = false});
 
   @override
   State<HomeFeedScreen> createState() => _HomeFeedScreenState();
@@ -36,7 +37,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     }
   }
 
-  Widget _buildFAB(BuildContext context) {
+  Widget? _buildFAB(BuildContext context) {
+    if (widget.isGuest) return null; // los invitados solo ven publicaciones
+
     return FloatingActionButton(
       backgroundColor: const Color(0xFF488C61),
       onPressed: () {
@@ -55,40 +58,38 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_posts.isEmpty) {
-      return Scaffold(
-        floatingActionButton: _buildFAB(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-        body: const Center(
-          child: Text(
-            'No hay publicaciones aún',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       floatingActionButton: _buildFAB(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      body: RefreshIndicator(
-        onRefresh: _loadData,
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          itemCount: _posts.length,
-          itemBuilder: (context, index) {
-            final post = _posts[index];
-            return PostCard(
-              post: post,
-              currentUser: _currentUser,
-              onDelete: () async {
-                await AuthService.deletePost(post['id']);
-                _loadData();
-              },
-            );
-          },
-        ),
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: _posts.isEmpty
+          ? const Center(
+              child: Text(
+                'No hay publicaciones aún',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadData,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                itemCount: _posts.length,
+                itemBuilder: (context, index) {
+                  final post = _posts[index];
+                  return PostCard(
+                    post: post,
+                    currentUser: _currentUser,
+                    isGuest: widget.isGuest,
+                    onDelete: () async {
+                      await AuthService.deletePost(post['id']);
+                      _loadData();
+                    },
+                  );
+                },
+              ),
+            ),
     );
   }
 }
@@ -128,12 +129,14 @@ class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   final Map<String, dynamic>? currentUser;
   final VoidCallback onDelete;
+  final bool isGuest;
 
   const PostCard({
     super.key,
     required this.post,
     required this.onDelete,
     this.currentUser,
+    this.isGuest = false,
   });
 
   @override
@@ -296,7 +299,7 @@ class _PostCardState extends State<PostCard> {
 
           // ✅ Botón de like funcional
           GestureDetector(
-            onTap: _handleLike,
+            onTap: widget.isGuest ? null : _handleLike,
             child: Row(
               children: [
                 Icon(

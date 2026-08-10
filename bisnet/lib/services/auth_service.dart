@@ -21,6 +21,13 @@ class AuthService {
     );
   } //Ruta de la página del juego
 
+  static String get utbisGameUrl {
+    return baseUrl.replaceAll(
+      '/api',
+      '/Utbis_game_responsivo/index.html',
+    );
+  } //Ruta de la página del juego MathOcean
+
   //
   // Guarda el token
   static Future<void> saveToken(String token) async {
