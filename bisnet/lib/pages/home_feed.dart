@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/pages/communities.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({super.key});
@@ -23,14 +24,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     try {
       final posts = await AuthService.getPosts();
       final user = await AuthService.getCurrentUser();
+      if (!mounted) return;
       setState(() {
         _posts = posts;
         _currentUser = user;
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
+  }
+
+  Widget _buildFAB(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: const Color(0xFF488C61),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ComunidadesScreen()),
+        );
+      },
+      child: const Icon(Icons.group, color: Colors.white, size: 28),
+    );
   }
 
   @override
@@ -40,30 +56,38 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     }
 
     if (_posts.isEmpty) {
-      return const Center(
-        child: Text(
-          'No hay publicaciones aún',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+      return Scaffold(
+        floatingActionButton: _buildFAB(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        body: const Center(
+          child: Text(
+            'No hay publicaciones aún',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadData,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          final post = _posts[index];
-          return PostCard(
-            post: post,
-            currentUser: _currentUser,
-            onDelete: () async {
-              await AuthService.deletePost(post['id']);
-              _loadData();
-            },
-          );
-        },
+    return Scaffold(
+      floatingActionButton: _buildFAB(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: _posts.length,
+          itemBuilder: (context, index) {
+            final post = _posts[index];
+            return PostCard(
+              post: post,
+              currentUser: _currentUser,
+              onDelete: () async {
+                await AuthService.deletePost(post['id']);
+                _loadData();
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -72,7 +96,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 // =========================================================================
 // WIDGET: TARJETA DE PUBLICACIÓN
 // =========================================================================
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   final Map<String, dynamic>? currentUser;
   final VoidCallback onDelete;
@@ -85,7 +109,51 @@ class PostCard extends StatelessWidget {
   });
 
   @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool _likedByMe = false;
+  int _likesCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _likedByMe = widget.post['liked_by_me'] == true;
+    _likesCount = (widget.post['likes_count'] is int)
+        ? widget.post['likes_count']
+        : 0;
+  }
+
+  Future<void> _handleLike() async {
+    setState(() {
+      _likedByMe = !_likedByMe;
+      _likesCount += _likedByMe ? 1 : -1;
+    });
+
+    try {
+      final response = await AuthService.toggleLike(widget.post['id']);
+      if (!mounted) return;
+      setState(() {
+        _likedByMe = response['liked'] == true;
+        _likesCount = (response['likes_count'] is int)
+            ? response['likes_count']
+            : _likesCount;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _likedByMe = !_likedByMe;
+        _likesCount += _likedByMe ? 1 : -1;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final post = widget.post;
+    final currentUser = widget.currentUser;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(20),
@@ -125,40 +193,42 @@ class PostCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Delete Post'),
-                      content: const Text('Are you sure?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: const Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.red),
+              if (currentUser != null && post['user_id'] == currentUser['id'])
+                GestureDetector(
+                  onTap: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Delete Post'),
+                        content: const Text('Are you sure?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancel'),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) onDelete();
-                },
-                child: Image.asset(
-                  'assets/Iconos compartidos/basura.png',
-                  height: 24,
-                  width: 24,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.delete, color: Colors.black),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) widget.onDelete();
+                  },
+                  child: Image.asset(
+                    'assets/Iconos compartidos/basura.png',
+                    height: 24,
+                    width: 24,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.delete, color: Colors.black),
+                  ),
                 ),
-              ),
             ],
           ),
+
           const SizedBox(height: 14),
 
           Text(
@@ -186,7 +256,7 @@ class PostCard extends StatelessWidget {
                 '${AuthService.storageUrl}/${post['media_path']}',
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(
+                errorBuilder: (_, __, ___) => const Icon(
                   Icons.broken_image,
                   size: 64,
                   color: Colors.grey,
@@ -196,25 +266,26 @@ class PostCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Row(
-            children: [
-              Image.asset(
-                'assets/Iconos compartidos/estrella.png',
-                height: 24,
-                width: 24,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.star_border, color: Colors.black),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '0',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          GestureDetector(
+            onTap: _handleLike,
+            child: Row(
+              children: [
+                Icon(
+                  _likedByMe ? Icons.star : Icons.star_border,
+                  color: _likedByMe ? Colors.amber : Colors.black,
+                  size: 24,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  '$_likesCount',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

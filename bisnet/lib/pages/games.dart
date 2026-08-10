@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import '../services/auth_service.dart';
 
 class GamesScreen extends StatefulWidget {
-  const GamesScreen({super.key});
+  final bool isGuest;
+  const GamesScreen({super.key, this.isGuest = false});
 
   @override
   State<GamesScreen> createState() => _GamesScreenState();
@@ -10,10 +12,7 @@ class GamesScreen extends StatefulWidget {
 
 class _GamesScreenState extends State<GamesScreen> {
   late final WebViewController _controller;
-  bool _loading = true;
-
-  // Cambia esta URL según donde esté corriendo tu juego
-  static const String _juegoUrl = 'http://10.0.2.2:8000/juego-phaser/index.html';
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -22,10 +21,10 @@ class _GamesScreenState extends State<GamesScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (_) => setState(() => _loading = false),
+          onPageFinished: (_) => setState(() => _isLoading = false),
         ),
       )
-      ..loadRequest(Uri.parse(_juegoUrl));
+      ..loadRequest(Uri.parse(AuthService.gameUrl));
   }
 
   @override
@@ -36,8 +35,7 @@ class _GamesScreenState extends State<GamesScreen> {
         child: Stack(
           children: [
             WebViewWidget(controller: _controller),
-            if (_loading)
-              const Center(child: CircularProgressIndicator()),
+            if (_isLoading) const Center(child: CircularProgressIndicator()),
           ],
         ),
       ),

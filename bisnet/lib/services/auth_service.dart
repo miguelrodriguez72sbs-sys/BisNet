@@ -6,8 +6,16 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://3ca76db3a4a903.lhr.life/api'; //cambiar cada vez que se inicie el comando ssh -R 80:127.0.0.1:8000 localhost.run
+      'https://fence-molecular-humanities-reef.trycloudflare.com/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
 
+  static String get gameUrl {
+    return baseUrl.replaceAll(
+      '/api',
+      '/juego-phaser_3/juego-phaser/index.html',
+    );
+  } //Ruta de la página del juego
+
+  //
   // Guarda el token
   static Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -200,6 +208,22 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
+  // Toggle like en un post
+  static Future<Map<String, dynamic>> toggleLike(int postId) async {
+    final token = await getToken();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/posts/$postId/like'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
   static Future<Map<String, dynamic>?> getCurrentUser() async {
     final token = await getToken();
     if (token == null) return null;
@@ -255,6 +279,125 @@ class AuthService {
       },
     );
 
+    return jsonDecode(response.body);
+  }
+
+  // ===== COMUNIDADES =====
+
+  // Ver todas las comunidades
+  static Future<List<dynamic>> getCommunities() async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/communities'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Crear comunidad
+  static Future<Map<String, dynamic>> createCommunity({
+    required String name,
+    required String description,
+    required String type, // 'public' o 'private'
+    File? image,
+  }) async {
+    final token = await getToken();
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/communities'),
+    );
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'ngrok-skip-browser-warning': 'true',
+    });
+    request.fields['name'] = name;
+    request.fields['description'] = description;
+    request.fields['type'] = type;
+    if (image != null) {
+      request.files.add(await http.MultipartFile.fromPath('image', image.path));
+    }
+    final streamed = await request.send();
+    final response = await http.Response.fromStream(streamed);
+    return jsonDecode(response.body);
+  }
+
+  // Unirse a comunidad
+  static Future<Map<String, dynamic>> joinCommunity(int id) async {
+    final token = await getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/communities/$id/join'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Salir de comunidad
+  static Future<Map<String, dynamic>> leaveCommunity(int id) async {
+    final token = await getToken();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/communities/$id/leave'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Ver miembros
+  static Future<List<dynamic>> getCommunityMembers(int id) async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/communities/$id/members'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Ver mensajes del chat
+  static Future<List<dynamic>> getCommunityMessages(int id) async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/communities/$id/messages'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  // Enviar mensaje
+  static Future<Map<String, dynamic>> sendCommunityMessage({
+    required int communityId,
+    required String message,
+  }) async {
+    final token = await getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/communities/$communityId/messages'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: jsonEncode({'message': message}),
+    );
     return jsonDecode(response.body);
   }
 }

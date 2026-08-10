@@ -6,10 +6,12 @@ import 'package:bisnet/pages/games.dart';
 import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
-import 'package:bisnet/services/auth_service.dart'; // ← agrega este
+import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isGuest;
+  const HomeScreen({super.key, this.isGuest = false});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,17 +20,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  List<Widget> get _pages => [
     const HomeFeedScreen(),
-    const EstadiasScreen(),
+    EstadiasScreen(isGuest: widget.isGuest),
     const PostScreen(),
-    const GamesScreen(),
-    const ProfileScreen(),
+    GamesScreen(isGuest: widget.isGuest),
+    ProfileScreen(isGuest: widget.isGuest),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -70,32 +72,36 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         selectedItemColor: const Color(0xFF488C61),
         unselectedItemColor: Colors.grey,
-        onTap: (index) async {
-          // ← solo un onTap
-          if (index == 1) {
-            final token = await AuthService.getToken();
-            if (token == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Debes iniciar sesión para ver las estadías'),
-                ),
-              );
-              return;
-            }
+        onTap: (index) {
+          if (widget.isGuest && [1, 2, 3].contains(index)) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(t.loginRequired)));
+            return;
           }
+
           setState(() {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.apartment), label: 'Stays'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'Post'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: t.home),
           BottomNavigationBarItem(
-            icon: Icon(Icons.sports_esports),
-            label: 'Games',
+            icon: const Icon(Icons.apartment),
+            label: t.stays,
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.add_box),
+            label: t.post,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.sports_esports),
+            label: t.plays,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: t.profile,
+          ),
         ],
       ),
     );

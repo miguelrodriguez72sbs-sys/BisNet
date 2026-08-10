@@ -1,0 +1,418 @@
+:root {
+    --bg-color: #f0f3f1;
+    --card-bg: #ffffff;
+    --primary-dark: #0f341d; /* Verde oscuro */
+    --accent-yellow: #ffcc00;
+    --text-color: #333333;
+    --border-color: #cccccc;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0f341d;
+    color: var(--text-color);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+.mascot-img-fluid {
+    width: 80%;          /* O 100% si quieres que ocupe todo el ancho */
+    max-height: 80%;     /* Evita que se salga por arriba o abajo */
+    object-fit: contain; /* Mantiene la proporción de tu dibujo sin deformarlo */
+    z-index: 2;          /* Hace que quede por encima de los círculos de fondo */
+}
+
+/* --- DISEÑO DE LAS PRIMERAS PÁGINAS (ESTILO FIGMA) --- */
+#auth-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #0f341d;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.auth-screen {
+    background-color: white;
+    border: 12px solid var(--primary-dark); /* Marco grueso verde de Figma */
+    width: 850px;
+    height: 520px;
+    display: none; 
+    grid-template-columns: 42% 58%; /* División Izquierda / Derecha */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 12px solid var(--primary-dark);
+    border-radius: 24px;
+}
+
+.auth-screen.active {
+    display: grid;
+}
+
+/* Lado izquierdo: Mascota y Círculos verdes */
+.mascot-side {
+    background-color: #ffffff;
+    border-right: 2px solid #eef2ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.circle-decor {
+    position: absolute;
+    background-color: #bbf2c4;
+    border-radius: 50%;
+    opacity: 0.6;
+    border-radius: 50%;
+}
+.cd1 { width: 90px; height: 90px; bottom: -20px; left: -20px; }
+.cd2 { width: 50px; height: 50px; bottom: 60px; left: 20px; }
+
+.mascot-avatar {
+    width: 160px;
+    height: 220px;
+    background: #eef5f0;
+    border: 2px dashed var(--primary-dark);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--primary-dark);
+    text-align: center;
+    font-size: 18px;
+    z-index: 2;
+}
+
+/* Lado derecho: Formularios y Botones */
+.form-side {
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-title {
+    font-size: 32px;
+    color: var(--primary-dark);
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.auth-subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.auth-buttons-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.auth-buttons-group .btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 15px;
+}
+
+/* Link de Invitado con línea decorativa */
+.guest-link-container {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.guest-accent-line {
+    display: block;
+    color: #999;
+    margin-bottom: 5px;
+}
+
+.guest-clickable {
+    color: #555;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.guest-clickable:hover {
+    color: var(--primary-dark);
+}
+
+.terms-scroll-box {
+    height: 160px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    font-size: 12px;
+    background: #fafafa;
+    color: #444;
+    line-height: 1.4;
+}
+
+/* Campos de Formulario */
+.form-group-row {
+    display: flex;
+    gap: 15px;
+}
+.form-group-row .form-group { flex: 1; }
+
+.form-group { margin-bottom: 15px; }
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #444;
+}
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: #fdfdfd;
+    border-radius: 12px;
+}
+
+.form-group-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+/* --- BOTONES --- */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.2s;
+    border-radius: 50px;
+}
+.btn-primary { background-color: var(--primary-dark); color: white; }
+.btn-primary:hover { background-color: #174d2b; }
+.btn-accent { background-color: var(--accent-yellow); color: #222; }
+.btn-accent:hover { background-color: #e6b800; }
+.btn-secondary { background-color: #e8ebe9; color: #333; }
+.btn-secondary:hover { background-color: #d8dedb; }
+
+.lang-switch-global {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: black;
+    font-weight: bold;
+    z-index: 1100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid #ccc;
+}
+
+/* --- INTERIOR DE LA APLICACIÓN --- */
+#app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+}
+
+.sidebar {
+    width: 240px;
+    background-color: var(--primary-dark);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 10px;
+}
+
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #cfd8dc;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.menu-item:hover, .menu-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.view-section { display: none; }
+.view-section.active { display: block; }
+
+/* RECUADROS INTERNOS */
+.feed-container { max-width: 680px; margin: 0 auto; }
+.profile-box, .form-publish-box, .notifications-box {
+    background: white; padding: 25px; border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.post-card {
+    background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;
+    border: 1px solid #e2e8f0; position: relative;
+}
+.post-header { display: flex; align-items: center; margin-bottom: 12px; }
+.avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-right: 12px; }
+.post-info h4 { margin: 0; font-size: 15px; }
+.post-info span { font-size: 11px; color: #777; }
+.post-media { width: 100%; max-height: 380px; object-fit: cover; border-radius: 6px; margin-top: 10px; }
+.post-actions { border-top: 1px solid #edf2f7; padding-top: 10px; margin-top: 12px; }
+.like-btn { background: none; border: none; cursor: pointer; color: #555; }
+.like-btn.liked { color: #e53e3e; font-weight: bold; }
+.delete-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: red; cursor: pointer; }
+
+.publish-btn { width: 100%; font-size: 16px; padding: 12px; }
+.companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.company-card { background: white; border-radius: 8px; padding: 20px; text-align: center; border: 1px solid #e2e8f0; }
+.company-logo { width: 60px; height: 60px; margin: 0 auto 10px; background: #edf2f7; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-dark); }
+
+.notif-badge { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; margin-left: auto; }
+.guest-placeholder { display: none; text-align: center; padding: 12px; background: #feebc8; color: #c05621; border-radius: 4px; margin-bottom: 20px; font-weight: bold; font-size: 13px; }
+
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; }
+.modal-content { background: white; padding: 25px; border-radius: 6px; width: 420px; position: relative; }
+.close-modal { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; }
+.games-box { background: white; padding: 40px; border-radius: 8px; text-align: center; }
+/* Contenedor relativo para que el lápiz flote dentro de este cuadro */
+.profile-avatar-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+}
+
+/* La imagen recortada en círculo perfecto */
+.avatar-profile-page {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* Hace la imagen redonda */
+    object-fit: cover;   /* Evita que tu foto de WhatsApp se estire o deforme */
+    border: 3px solid #ffffff; /* Pequeño borde blanco de separación */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Sombra suave para que resalte */
+}
+
+/* El botón flotante del lápiz (Círculo Verde) */
+.edit-avatar-pencil {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background-color: var(--primary-dark, #2e7d32); /* Tu color verde institucional */
+    color: white; /* Color blanco para el icono SVG */
+    width: 34px;
+    height: 34px;
+    border-radius: 50%; /* Círculo perfecto para el botón */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    z-index: 5;
+}
+
+/* Efecto visual cuando pasas el mouse por encima del lápiz */
+.edit-avatar-pencil:hover {
+    transform: scale(1.1);
+    background-color: #1b5e20; /* Un verde un poco más oscuro al hacer hover */
+}
+
+/* Asegura que el SVG herede el color blanco correctamente */
+.edit-avatar-pencil svg {
+    display: block;
+}
+/* Caja del área de carga (Dropzone) */
+.upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 180px;
+    border: 2px dashed #b0bec5; /* Borde punteado estético */
+    border-radius: 16px;       /* Bordes muy redondos y suaves */
+    background-color: #fafafa;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin-top: 8px;
+}
+
+.upload-dropzone:hover {
+    background-color: #f1f8e9;       /* Color sutil de tu paleta verde en hover */
+    border-color: var(--primary-dark, #2e7d32);
+}
+
+.dropzone-content {
+    text-align: center;
+    padding: 20px;
+}
+
+/* Control estricto de las multimedia previsualizadas o publicadas para evitar que desaparezcan */
+.post-media, .dropzone-preview-element {
+    width: 100%;
+    max-height: 280px;      /* Altura máxima para que no rompa el feed */
+    object-fit: cover;      /* Ajuste perfecto */
+    border-radius: 12px;    /* Bordes redondos en las fotos del muro */
+    display: block;
+    margin-top: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}

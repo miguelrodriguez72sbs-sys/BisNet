@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/pages/email.dart';
 import 'package:bisnet/pages/register.dart';
 import 'package:bisnet/pages/home.dart';
+import 'package:bisnet/pages/traductor.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
@@ -36,9 +39,16 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Welcome to',
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  Center(
+                    child: Text(
+                      t.welcomeTo,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
                   ),
                   const Text(
                     'BISNET',
@@ -52,10 +62,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 12),
 
-                  const Text(
-                    'Connect with your community and plan your future stays',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                  Center(
+                    child: Text(
+                      t.connectCommunity,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: 32),
@@ -92,9 +107,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: const Text(
-                        'Log in',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      child: Text(
+                        t.login,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -119,9 +137,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      child: Text(
+                        t.register,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
@@ -137,8 +158,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     },
-                    child: const Text(
-                      'Explore as guest',
+                    child: Text(
+                      t.exploreGuest,
+                      style: TextStyle(color: Color(0xFF488C61), fontSize: 16),
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TraductorScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      t.translator,
                       style: TextStyle(color: Color(0xFF488C61), fontSize: 16),
                     ),
                   ),

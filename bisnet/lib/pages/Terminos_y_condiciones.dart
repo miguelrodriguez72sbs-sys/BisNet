@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// NUEVA PANTALLA: TÉRMINOS Y CONDICIONES
 
 class TermsAndConditionsScreen extends StatelessWidget {
   const TermsAndConditionsScreen({super.key});
@@ -29,7 +28,6 @@ class TermsAndConditionsScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Imagen del Búho desde carpeta assets
                   Image.asset(
                     'assets/Lechuzas/Lechuza_2.png',
                     height: 220,
@@ -55,7 +53,6 @@ class TermsAndConditionsScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // Texto descriptivo
                   const Text(
                     '''
 TERMS AND CONDITIONS OF USE

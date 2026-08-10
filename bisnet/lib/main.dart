@@ -1,20 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:bisnet/pages/login.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:bisnet/pages/home.dart';
+import 'package:bisnet/pages/traductor.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  // Permite cambiar idioma desde cualquier pantalla
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale _locale = const Locale('en'); // idioma por defecto
+
+  void setLocale(Locale locale) {
+    setState(() => _locale = locale);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bisnet',
+      //Configuración de idiomas
+      locale: _locale,
+      supportedLocales: const [Locale('es'), Locale('en')],
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: const SplashScreen(),
     );
   }
@@ -36,44 +62,38 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkSession() async {
-    //cambiar cada vez que se inicie el comando ssh -R 80: o cuando se instale definitivamente el backend en un hosting
     final token = await AuthService.getToken();
-
     await Future.delayed(const Duration(seconds: 2));
-
     if (!mounted) return;
 
     if (token != null) {
       try {
-        // Verifica que el token siga siendo válido
         final user = await AuthService.getProfile();
-
         if (user.containsKey('id')) {
-          // Token válido → va al Home
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         } else {
-          // Token inválido → borra y va al Login
           await AuthService.deleteToken();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            //Si no hay sesión va al selector de idioma
+            MaterialPageRoute(builder: (context) => const TraductorScreen()),
           );
         }
       } catch (e) {
-        // Error de conexión → va al Login
         await AuthService.deleteToken();
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const TraductorScreen()),
         );
       }
     } else {
+      //Primera vez → selector de idioma en vez de login directo
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => const TraductorScreen()),
       );
     }
   }

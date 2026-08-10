@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/pages/home.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:bisnet/L10n/app_localizations.dart';
 
 class LoginFormScreen extends StatefulWidget {
   const LoginFormScreen({super.key});
@@ -23,6 +24,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0D3C24),
       body: SafeArea(
@@ -82,7 +84,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF6B962D),
+                                color: Color(0xFF488C61),
                                 letterSpacing: 1.2,
                               ),
                             ),
@@ -92,10 +94,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                         const SizedBox(height: 32),
 
                         // === LOG IN centrado ===
-                        const Center(
+                        Center(
                           child: Text(
-                            'Log in',
-                            style: TextStyle(
+                            t.login,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                             ),
@@ -104,11 +106,11 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                         const SizedBox(height: 8),
 
-                        const Center(
+                        Center(
                           child: Text(
-                            'Enter your details to continue',
+                            t.enterDetails,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 15,
                               color: Colors.black87,
                             ),
@@ -125,7 +127,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               Icons.email_outlined,
                               color: Color(0xFF488C61),
                             ),
-                            hintText: 'E-mail',
+                            hintText: t.email,
                             hintStyle: const TextStyle(
                               fontStyle: FontStyle.italic,
                             ),
@@ -165,7 +167,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               Icons.lock_outline,
                               color: Color(0xFF488C61),
                             ),
-                            hintText: 'Password',
+                            hintText: t.password,
                             hintStyle: const TextStyle(
                               fontStyle: FontStyle.italic,
                             ),
@@ -210,28 +212,28 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                                 debugPrint('Answer: $response');
 
+                                if (!mounted) return;
+
                                 if (response.containsKey('token')) {
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
+                                      builder: (context) => const HomeScreen(),
                                     ),
                                     (route) => false,
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        response['message'] ??
-                                            'Incorrect credentials',
-                                      ),
+                                      content: Text(t.incorrectCredentials),
                                     ),
                                   );
                                 }
                               } catch (e) {
                                 debugPrint('ERROR: $e');
+                                if (!mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')),
+                                  SnackBar(content: Text('${t.error}: $e')),
                                 );
                               }
                             },
@@ -242,9 +244,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                               ),
                               elevation: 2,
                             ),
-                            child: const Text(
-                              'Log in',
-                              style: TextStyle(
+                            child: Text(
+                              t.login,
+                              style: const TextStyle(
                                 fontSize: 17,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -255,10 +257,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                         const SizedBox(height: 16),
 
-                        const Center(
+                        Center(
                           child: Text(
-                            'or',
-                            style: TextStyle(color: Colors.grey),
+                            t.or,
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ),
 
@@ -270,11 +272,13 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           height: 52,
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
+                                  builder: (context) =>
+                                      const HomeScreen(isGuest: true),
                                 ),
+                                (route) => false,
                               );
                             },
                             style: OutlinedButton.styleFrom(
@@ -286,9 +290,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            child: const Text(
-                              'Explore as guest',
-                              style: TextStyle(
+                            child: Text(
+                              t.exploreGuest,
+                              style: const TextStyle(
                                 color: Color(0xFF488C61),
                                 fontWeight: FontWeight.w500,
                               ),
@@ -303,7 +307,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
 
                   // === MASCOTA — asomándose desde abajo del card ===
                   Positioned(
-                    bottom: 0, // pegada al fondo del card
+                    bottom: 0,
                     left: 0,
                     right: 0,
                     child: Center(
