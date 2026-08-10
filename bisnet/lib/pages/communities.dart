@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/pages/community_detail.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
+import 'package:bisnet/widgets/responsive_page.dart';
 
 class ComunidadesScreen extends StatefulWidget {
   const ComunidadesScreen({super.key});
@@ -187,9 +188,11 @@ class _ComunidadesScreenState extends State<ComunidadesScreen> {
           ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
+      body: ResponsivePage(
+        background: Colors.white,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -279,6 +282,7 @@ class _ComunidadesScreenState extends State<ComunidadesScreen> {
                 ),
               ],
             ),
+      ),
     );
   }
 }

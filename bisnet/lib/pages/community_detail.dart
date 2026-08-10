@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/widgets/responsive_page.dart';
 
 class CommunityDetailScreen extends StatefulWidget {
   final Map<String, dynamic> community;
@@ -71,12 +72,15 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          ChatTab(communityId: widget.community['id']),
-          MembersTab(members: _members, loading: _loadingMembers),
-        ],
+      body: ResponsivePage(
+        background: Colors.white,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            ChatTab(communityId: widget.community['id']),
+            MembersTab(members: _members, loading: _loadingMembers),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
+import 'package:bisnet/widgets/responsive_page.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -106,32 +107,34 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _notifications.isEmpty
-          ? Center(
-              child: Text(
-                t.noNotifications,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+      body: ResponsivePage(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : _notifications.isEmpty
+            ? Center(
+                child: Text(
+                  t.noNotifications,
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: _loadNotifications,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: _notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = _notifications[index];
+                    final isUnread = notification['read_at'] == null;
+                    return _NotificationTile(
+                      notification: notification,
+                      isUnread: isUnread,
+                      relativeTime: _relativeTime(notification['created_at']),
+                      onTap: () => _markRead(index),
+                    );
+                  },
+                ),
               ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadNotifications,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: _notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = _notifications[index];
-                  final isUnread = notification['read_at'] == null;
-                  return _NotificationTile(
-                    notification: notification,
-                    isUnread: isUnread,
-                    relativeTime: _relativeTime(notification['created_at']),
-                    onTap: () => _markRead(index),
-                  );
-                },
-              ),
-            ),
+      ),
     );
   }
 }
