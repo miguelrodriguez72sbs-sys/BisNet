@@ -58,65 +58,39 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    if (_posts.isEmpty) {
+      return Scaffold(
+        floatingActionButton: _buildFAB(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        body: const Center(
+          child: Text(
+            'No hay publicaciones aún',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       floatingActionButton: _buildFAB(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _posts.isEmpty
-          ? const Center(
-              child: Text(
-                'No hay publicaciones aún',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadData,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                itemCount: _posts.length,
-                itemBuilder: (context, index) {
-                  final post = _posts[index];
-                  return PostCard(
-                    post: post,
-                    currentUser: _currentUser,
-                    isGuest: widget.isGuest,
-                    onDelete: () async {
-                      await AuthService.deletePost(post['id']);
-                      _loadData();
-                    },
-                  );
-                },
-              ),
-            ),
-    );
-  }
-}
-
-// =========================================================================
-// WIDGET: AVATAR DEL AUTOR DE UN POST
-// =========================================================================
-class _AuthorAvatar extends StatelessWidget {
-  final String? photoPath;
-
-  const _AuthorAvatar({required this.photoPath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-      child: ClipOval(
-        child: photoPath != null
-            ? Image.network(
-                '${AuthService.storageUrl}/$photoPath',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.person, color: Colors.black, size: 32),
-              )
-            : const Icon(Icons.person, color: Colors.black, size: 32),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: _posts.length,
+          itemBuilder: (context, index) {
+            final post = _posts[index];
+            return PostCard(
+              post: post,
+              currentUser: _currentUser,
+              onDelete: () async {
+                await AuthService.deletePost(post['id']);
+                _loadData();
+              },
+            );
+          },
+        ),
       ),
     );
   }

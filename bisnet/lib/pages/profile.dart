@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/services/realtime_service.dart';
 import 'package:bisnet/pages/login.dart';
 import 'package:bisnet/pages/edit_profile.dart';
 
@@ -13,7 +14,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Map<String, dynamic>? _user;
-  List<dynamic> _posts = [];
+  List _posts = [];
   bool _loading = true;
 
   @override
@@ -24,11 +25,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadData() async {
     try {
-      final data = await AuthService.getProfile();
+      final data  = await AuthService.getProfile();
       final posts = await AuthService.getMyPosts();
       setState(() {
-        _user = data;
-        _posts = posts;
+        _user    = data;
+        _posts   = posts;
         _loading = false;
       });
     } catch (e) {
@@ -38,36 +39,143 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      children: [
-        UserInfoCard(user: _user),
-        const SizedBox(height: 12),
-        ..._posts.map(
-          (post) => UserPostCard(
-            post: post,
-            onDelete: () async {
-              await AuthService.deletePost(post['id']);
-              _loadData();
-            },
-          ),
-        ),
-        if (_posts.isEmpty)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                'You have not made any posts yet',
-                style: TextStyle(color: Colors.grey),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F4),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── AppBar personalizada ──────────────────────────────
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6B962D),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/Lechuzas/Logo.png',
+                    height: 40,
+                    width: 40,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.account_circle, color: Colors.white, size: 40),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'BISNET',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const Spacer(),
+                  Image.asset(
+                    'assets/Iconos_movil/Notificacion.png',
+                    height: 24,
+                    width: 24,
+                    color: Colors.white,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.notifications, color: Colors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 90,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 1.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 6),
+                        child: Icon(Icons.search, color: Colors.white, size: 18),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        const SizedBox(height: 12),
-      ],
+
+            // ── Contenido scrollable ──────────────────────────────
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        UserInfoCard(user: _user),
+                        const SizedBox(height: 12),
+                        ..._posts.map(
+                          (post) => UserPostCard(
+                            post: post,
+                            onDelete: () async {
+                              await AuthService.deletePost(post['id']);
+                              _loadData();
+                            },
+                          ),
+                        ),
+                        if (_posts.isEmpty)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Text(
+                                'You have not made any posts yet',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                      ],
+                    ),
+            ),
+
+            // ── Barra de navegación inferior ──────────────────────
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6B962D),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset('assets/Iconos_movil/home.png',
+                      height: 32, width: 32, color: Colors.white,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.home, color: Colors.white, size: 32)),
+                  Image.asset('assets/Iconos_movil/Estadias.png',
+                      height: 32, width: 32, color: Colors.white,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.business, color: Colors.white, size: 32)),
+                  Image.asset('assets/Iconos_movil/Publicar.png',
+                      height: 32, width: 32, color: Colors.white,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.add_circle_outline, color: Colors.white, size: 32)),
+                  Image.asset('assets/Iconos_movil/Juegos.png',
+                      height: 32, width: 32, color: Colors.white,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.sports_esports, color: Colors.white, size: 32)),
+                  Image.asset('assets/Iconos_movil/usuario seleccionado.png',
+                      height: 32, width: 32, color: Colors.white,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.person, color: Colors.white, size: 32)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -127,6 +235,7 @@ class UserInfoCard extends StatelessWidget {
             children: [
               _ProfileAvatar(photoPath: user?['profile_photo']),
               const SizedBox(width: 8),
+              // ── Mejora del Archivo 2: Flexible evita overflow en textos largos ──
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,10 +252,7 @@ class UserInfoCard extends StatelessWidget {
                     ),
                     Text(
                       user?['career'] ?? 'Career',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.black87),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -179,12 +285,11 @@ class UserInfoCard extends StatelessWidget {
                   const SizedBox(width: 16),
                   GestureDetector(
                     onTap: () async {
+                      await RealtimeService.instance.disconnectForLogout();
                       await AuthService.deleteToken();
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
                         (route) => false,
                       );
                     },
@@ -233,6 +338,7 @@ class UserPostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Encabezado ────────────────────────────────────────
           Row(
             children: [
               const Icon(Icons.person, color: Colors.black, size: 32),
@@ -289,7 +395,10 @@ class UserPostCard extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 14),
+
+          // ── Título del post ───────────────────────────────────
           Text(
             post['title'] ?? '',
             style: const TextStyle(
@@ -299,13 +408,14 @@ class UserPostCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+
+          // ── Descripción ───────────────────────────────────────
           Text(
             post['description'] ?? '',
             style: const TextStyle(fontSize: 14, color: Colors.black87),
           ),
-          const SizedBox(height: 12),
 
-          // Imagen del post
+          // ── Imagen del post (si existe) ───────────────────────
           if (post['media_path'] != null) ...[
             const SizedBox(height: 12),
             ClipRRect(
@@ -322,7 +432,10 @@ class UserPostCard extends StatelessWidget {
               ),
             ),
           ],
+
           const SizedBox(height: 12),
+
+          // ── Estrellas ─────────────────────────────────────────
           Row(
             children: [
               Image.asset(

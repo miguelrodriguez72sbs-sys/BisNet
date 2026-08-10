@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
+import 'package:bisnet/services/realtime_service.dart';
+import 'package:laravel_reverb/laravel_reverb.dart';
 
 class CommunityDetailScreen extends StatefulWidget {
   final Map<String, dynamic> community;
@@ -99,20 +101,42 @@ class _ChatTabState extends State<ChatTab> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   Map<String, dynamic>? _currentUser;
+  Subscription? _realtimeSubscription;
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    // Polling cada 3 segundos para simular tiempo real
-    _startPolling();
+    _initRealtime();
   }
 
-  void _startPolling() {
-    Future.delayed(const Duration(seconds: 3), () {
+  Future<void> _initRealtime() async {
+    try {
+      final reverb = await RealtimeService.instance.ensureConnected();
       if (!mounted) return;
-      _loadMessages();
-      _startPolling();
+
+      _realtimeSubscription = reverb
+          .private('community.${widget.communityId}')
+          .listen('.message.sent', _onNewMessage);
+    } catch (e) {
+      debugPrint('No se pudo conectar el chat en tiempo real: $e');
+    }
+  }
+
+  void _onNewMessage(Map<String, dynamic> data) {
+    if (!mounted) return;
+    final alreadyExists = _messages.any((m) => m['id'] == data['id']);
+    if (alreadyExists) return;
+
+    setState(() => _messages.add(data));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -165,6 +189,7 @@ class _ChatTabState extends State<ChatTab> {
 
   @override
   void dispose() {
+    _realtimeSubscription?.cancel();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
