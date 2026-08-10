@@ -6,7 +6,6 @@ import 'package:bisnet/pages/games.dart';
 import 'package:bisnet/pages/profile.dart';
 import 'package:bisnet/pages/estadias.dart';
 import 'package:bisnet/pages/home_feed.dart';
-import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
