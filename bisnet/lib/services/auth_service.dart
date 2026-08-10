@@ -263,6 +263,20 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
+  // Ver notificaciones
+  static Future<List<dynamic>> getNotifications() async {
+    final token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/notifications'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
   // Ver todas las estadías
   static Future<List<dynamic>> getEstadias({
     String? search,
