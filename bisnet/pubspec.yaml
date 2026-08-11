@@ -66,7 +66,8 @@ flutter:
 
   # Assets
   assets:
-    - assets/Lechuzas/        
+    - assets/Lechuzas/ 
+    - assets/Iconos_movil/       
 
   # To add assets to your application, add an assets section, like this:
   # assets:
