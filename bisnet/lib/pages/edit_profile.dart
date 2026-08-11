@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
+import 'package:bisnet/pages/traductor.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -361,6 +362,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           color: Colors.white,
                           fontSize: 16,
                         ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // BOTÓN CAMBIAR IDIOMA
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TraductorScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.language,
+                      color: Color(0xFF488C61),
+                    ),
+                    label: Text(
+                      t.translator,
+                      style: const TextStyle(
+                        color: Color(0xFF488C61),
+                        fontSize: 16,
                       ),
                     ),
                   ),

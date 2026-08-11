@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/pages/email.dart';
 import 'package:bisnet/pages/register.dart';
 import 'package:bisnet/pages/home.dart';
-import 'package:bisnet/pages/traductor.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -222,27 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 2),
 
-                    // -----------------------------
-                    // TRANSLATOR
-                    // -----------------------------
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const TraductorScreen(),
-                          ),
-                        );
-                      },
-
-                      child: Text(
-                        t.translator,
-                        style: const TextStyle(
-                          color: Color(0xFF488C61),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

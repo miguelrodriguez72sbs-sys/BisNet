@@ -10,6 +10,20 @@ class TraductorScreen extends StatefulWidget {
 }
 
 class _TraductorScreenState extends State<TraductorScreen> {
+  void _selectLanguage(Locale locale) {
+    MyApp.of(context)?.setLocale(locale);
+    // Si se abre desde otra pantalla (login / editar perfil), vuelve a ella.
+    // En el primer arranque no hay pantalla previa, así que va al login.
+    if (Navigator.of(context).canPop()) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,14 +93,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                           // ------------------------------------------------
                           ElevatedButton(
                             onPressed: () {
-                              MyApp.of(context)?.setLocale(const Locale('es'));
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
-                                ),
-                              );
+                              _selectLanguage(const Locale('es'));
                             },
                             child: const Text('Español'),
                           ),
@@ -110,14 +117,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                           // ------------------------------------------------
                           ElevatedButton(
                             onPressed: () {
-                              MyApp.of(context)?.setLocale(const Locale('en'));
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
-                                ),
-                              );
+                              _selectLanguage(const Locale('en'));
                             },
                             child: const Text('English'),
                           ),
@@ -183,14 +183,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                     // --------------------------------------------------
                     ElevatedButton(
                       onPressed: () {
-                        MyApp.of(context)?.setLocale(const Locale('es'));
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                        );
+                        _selectLanguage(const Locale('es'));
                       },
                       child: const Text('Español'),
                     ),
@@ -214,14 +207,7 @@ class _TraductorScreenState extends State<TraductorScreen> {
                     // --------------------------------------------------
                     ElevatedButton(
                       onPressed: () {
-                        MyApp.of(context)?.setLocale(const Locale('en'));
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                        );
+                        _selectLanguage(const Locale('en'));
                       },
                       child: const Text('English'),
                     ),
