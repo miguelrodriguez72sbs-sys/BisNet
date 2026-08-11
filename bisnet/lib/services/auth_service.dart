@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
@@ -127,7 +127,10 @@ class AuthService {
   }
 
   // Subir / cambiar foto de perfil
-  static Future<Map<String, dynamic>> updateProfilePhoto(File photo) async {
+  static Future<Map<String, dynamic>> updateProfilePhoto(
+    Uint8List photoBytes,
+    String fileName,
+  ) async {
     final token = await getToken();
 
     var request = http.MultipartRequest(
@@ -139,7 +142,9 @@ class AuthService {
       'Authorization': 'Bearer $token',
       'ngrok-skip-browser-warning': 'true',
     });
-    request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
+    request.files.add(
+      http.MultipartFile.fromBytes('photo', photoBytes, filename: fileName),
+    );
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
@@ -183,7 +188,8 @@ class AuthService {
   static Future<Map<String, dynamic>> createPost({
     required String title,
     required String description,
-    File? mediaFile,
+    Uint8List? mediaBytes,
+    String? mediaName,
   }) async {
     final token = await getToken();
 
@@ -198,9 +204,13 @@ class AuthService {
     request.fields['title'] = title;
     request.fields['description'] = description;
 
-    if (mediaFile != null) {
+    if (mediaBytes != null) {
       request.files.add(
-        await http.MultipartFile.fromPath('media', mediaFile.path),
+        http.MultipartFile.fromBytes(
+          'media',
+          mediaBytes,
+          filename: mediaName ?? 'media.jpg',
+        ),
       );
     }
 
@@ -328,7 +338,8 @@ class AuthService {
     required String name,
     required String description,
     required String type, // 'public' o 'private'
-    File? image,
+    Uint8List? imageBytes,
+    String? imageName,
   }) async {
     final token = await getToken();
     var request = http.MultipartRequest(
@@ -343,8 +354,14 @@ class AuthService {
     request.fields['name'] = name;
     request.fields['description'] = description;
     request.fields['type'] = type;
-    if (image != null) {
-      request.files.add(await http.MultipartFile.fromPath('image', image.path));
+    if (imageBytes != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          imageBytes,
+          filename: imageName ?? 'image.jpg',
+        ),
+      );
     }
     final streamed = await request.send();
     final response = await http.Response.fromStream(streamed);

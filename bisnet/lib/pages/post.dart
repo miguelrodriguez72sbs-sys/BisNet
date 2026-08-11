@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:bisnet/services/auth_service.dart';
 
 class PostScreen extends StatefulWidget {
@@ -11,24 +11,47 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  File? _mediaFile;
+  Uint8List? _mediaBytes;
+  String? _mediaName;
   bool _isVideo = false;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _descController = TextEditingController();
   final TextEditingController _tagsController = TextEditingController();
 
   Future<void> _pickMedia(ImageSource source, bool isVideo) async {
-    final XFile? file = isVideo
-        ? await _picker.pickVideo(source: source)
-        : await _picker.pickImage(source: source);
+    final XFile? file;
+    try {
+      file = isVideo
+          ? await _picker.pickVideo(source: source)
+          : await _picker.pickImage(source: source);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cámara no disponible en esta plataforma'),
+        ),
+      );
+      return;
+    }
 
     if (!mounted) return;
 
     if (file != null) {
-      setState(() {
-        _mediaFile = File(file.path);
-        _isVideo = isVideo;
-      });
+      if (isVideo) {
+        setState(() {
+          _mediaBytes = null;
+          _isVideo = true;
+        });
+      } else {
+        final bytes = await file.readAsBytes();
+        final name = file.name;
+        if (!mounted) return;
+        setState(() {
+          _mediaBytes = bytes;
+          _mediaName = name;
+          _isVideo = false;
+        });
+      }
     }
   }
 
@@ -91,7 +114,8 @@ class _PostScreenState extends State<PostScreen> {
             ? _tagsController.text
             : 'Sin título',
         description: _descController.text,
-        mediaFile: _mediaFile,
+        mediaBytes: _mediaBytes,
+        mediaName: _mediaName,
       );
 
       if (!mounted) return;
@@ -104,7 +128,8 @@ class _PostScreenState extends State<PostScreen> {
         setState(() {
           _descController.clear();
           _tagsController.clear();
-          _mediaFile = null;
+          _mediaBytes = null;
+          _mediaName = null;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -138,7 +163,7 @@ class _PostScreenState extends State<PostScreen> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey),
               ),
-              child: _mediaFile != null
+              child: _mediaBytes != null || _isVideo
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: _isVideo
@@ -149,7 +174,7 @@ class _PostScreenState extends State<PostScreen> {
                                 color: Colors.grey,
                               ),
                             )
-                          : Image.file(_mediaFile!, fit: BoxFit.cover),
+                          : Image.memory(_mediaBytes!, fit: BoxFit.cover),
                     )
                   : const Column(
                       mainAxisAlignment: MainAxisAlignment.center,

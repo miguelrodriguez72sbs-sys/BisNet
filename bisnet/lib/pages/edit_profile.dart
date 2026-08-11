@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/L10n/app_localizations.dart';
@@ -18,7 +18,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController nameController;
   late TextEditingController careerController;
   late TextEditingController descriptionController;
-  File? _selectedImage;
+  Uint8List? _selectedImageBytes;
+  String? _selectedImageName;
   bool _uploading = false;
 
   @override
@@ -43,18 +44,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image;
+    try {
+      image = await picker.pickImage(source: ImageSource.gallery);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo acceder a la galería en esta plataforma'),
+        ),
+      );
+      return;
+    }
     if (image == null) return;
-    setState(() => _selectedImage = File(image.path));
+    final bytes = await image.readAsBytes();
+    final name = image.name;
+    if (!mounted) return;
+    setState(() {
+      _selectedImageBytes = bytes;
+      _selectedImageName = name;
+    });
   }
 
   Widget _buildProfilePhoto() {
     final currentPhoto = widget.user?['profile_photo'];
 
     Widget avatar;
-    if (_selectedImage != null) {
+    if (_selectedImageBytes != null) {
       avatar = ClipOval(
-        child: Image.file(_selectedImage!, fit: BoxFit.cover, width: 96, height: 96),
+        child: Image.memory(
+          _selectedImageBytes!,
+          fit: BoxFit.cover,
+          width: 96,
+          height: 96,
+        ),
       );
     } else if (currentPhoto != null && currentPhoto.toString().isNotEmpty) {
       avatar = ClipOval(
@@ -315,10 +338,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     widget.user ?? {};
 
                                 // 1) Subir foto si se eligió una
-                                if (_selectedImage != null) {
+                                if (_selectedImageBytes != null) {
                                   final photoResponse =
                                       await AuthService.updateProfilePhoto(
-                                    _selectedImage!,
+                                    _selectedImageBytes!,
+                                    _selectedImageName ?? 'photo.jpg',
                                   );
                                   if (photoResponse.containsKey('user')) {
                                     updatedUser = photoResponse['user'];
