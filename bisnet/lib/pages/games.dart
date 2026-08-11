@@ -74,7 +74,10 @@ class _GameCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [backgroundColor, backgroundColor.withValues(alpha: 0.75)],
+              colors: [
+                backgroundColor,
+                backgroundColor.withValues(alpha: 0.75),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

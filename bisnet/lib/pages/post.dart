@@ -22,6 +22,8 @@ class _PostScreenState extends State<PostScreen> {
         ? await _picker.pickVideo(source: source)
         : await _picker.pickImage(source: source);
 
+    if (!mounted) return;
+
     if (file != null) {
       setState(() {
         _mediaFile = File(file.path);
@@ -73,6 +75,49 @@ class _PostScreenState extends State<PostScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _submitPost() async {
+    if (_descController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Add a description')));
+      return;
+    }
+
+    try {
+      final response = await AuthService.createPost(
+        title: _tagsController.text.isNotEmpty
+            ? _tagsController.text
+            : 'Sin título',
+        description: _descController.text,
+        mediaFile: _mediaFile,
+      );
+
+      if (!mounted) return;
+
+      if (response.containsKey('post')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post created successfully')),
+        );
+        // Limpiar campos
+        setState(() {
+          _descController.clear();
+          _tagsController.clear();
+          _mediaFile = null;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Error creating post')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
   }
 
   @override
@@ -159,50 +204,7 @@ class _PostScreenState extends State<PostScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: () async {
-                if (_descController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Add a description')),
-                  );
-                  return;
-                }
-
-                try {
-                  final response = await AuthService.createPost(
-                    title: _tagsController.text.isNotEmpty
-                        ? _tagsController.text
-                        : 'Sin título',
-                    description: _descController.text,
-                    mediaFile: _mediaFile,
-                  );
-
-                  if (response.containsKey('post')) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Post created successfully'),
-                      ),
-                    );
-                    // Limpiar campos
-                    setState(() {
-                      _descController.clear();
-                      _tagsController.clear();
-                      _mediaFile = null;
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          response['message'] ?? 'Error creating post',
-                        ),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                }
-              },
+              onPressed: _submitPost,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF488C61),
                 shape: RoundedRectangleBorder(
