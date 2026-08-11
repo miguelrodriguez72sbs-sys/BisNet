@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:bisnet/services/auth_service.dart';
 import 'package:bisnet/pages/login.dart';
 import 'package:bisnet/pages/edit_profile.dart';
-import 'package:bisnet/pages/notifications.dart';
 
 class ProfileScreen extends StatefulWidget {
   final bool isGuest;
@@ -48,75 +47,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── AppBar personalizada ──────────────────────────────
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF6B962D),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/Lechuzas/Logo.png',
-                    height: 40,
-                    width: 40,
-                    errorBuilder: (_, _, _) =>
-                        const Icon(Icons.account_circle, color: Colors.white, size: 40),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'BISNET',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
-                      );
-                    },
-                    child: Image.asset(
-                      'assets/Iconos_movil/Notificacion.png',
-                      height: 24,
-                      width: 24,
-                      color: Colors.white,
-                      errorBuilder: (_, _, _) =>
-                          const Icon(Icons.notifications, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    width: 90,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 6),
-                        child: Icon(Icons.search, color: Colors.white, size: 18),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // ── Contenido scrollable ──────────────────────────────
             Expanded(
               child: _loading
@@ -124,7 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       children: [
-                        UserInfoCard(user: _user, onUserUpdated: _onUserUpdated),
+                        UserInfoCard(
+                          user: _user,
+                          onUserUpdated: _onUserUpdated,
+                        ),
                         const SizedBox(height: 12),
                         ..._posts.map(
                           (post) => UserPostCard(
@@ -148,32 +81,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 12),
                       ],
                     ),
-            ),
-
-            // ── Barra de navegación inferior ──────────────────────
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF6B962D),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const _NavIcon(asset: 'assets/Iconos_movil/home.png', fallback: Icons.home),
-                  const _NavIcon(asset: 'assets/Iconos_movil/Estadias.png', fallback: Icons.business),
-                  const _NavIcon(asset: 'assets/Iconos_movil/Publicar.png', fallback: Icons.add_circle_outline),
-                  const _NavIcon(asset: 'assets/Iconos_movil/Juegos.png', fallback: Icons.sports_esports),
-                  const _NavIcon(
-                    asset: 'assets/Iconos_movil/usuario seleccionado.png',
-                    fallback: Icons.person,
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -215,14 +122,14 @@ class UserInfoCard extends StatelessWidget {
                           width: 40,
                           height: 40,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
+                          errorBuilder: (_, __, ___) =>
                               const Icon(Icons.person, color: Colors.white),
                         ),
                       )
                     : const Icon(Icons.person, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 8),
-              // ── Mejora del Archivo 2: Flexible evita overflow en textos largos ──
+              // ── Flexible evita overflow en textos largos ──
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +146,10 @@ class UserInfoCard extends StatelessWidget {
                     ),
                     Text(
                       user?['career'] ?? 'Career',
-                      style: const TextStyle(fontSize: 14, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -275,7 +185,9 @@ class UserInfoCard extends StatelessWidget {
                       await AuthService.deleteToken();
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
                         (route) => false,
                       );
                     },
@@ -444,27 +356,6 @@ class UserPostCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-// =========================================================================
-// WIDGET: ÍCONO DE LA BARRA DE NAVEGACIÓN INFERIOR (con fallback)
-// =========================================================================
-class _NavIcon extends StatelessWidget {
-  final String asset;
-  final IconData fallback;
-
-  const _NavIcon({required this.asset, required this.fallback});
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      asset,
-      height: 32,
-      width: 32,
-      color: Colors.white,
-      errorBuilder: (_, _, _) => Icon(fallback, color: Colors.white, size: 32),
     );
   }
 }

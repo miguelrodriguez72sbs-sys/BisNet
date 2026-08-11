@@ -6,7 +6,7 @@ import 'dart:io';
 
 class AuthService {
   static const String baseUrl =
-      'https://fence-molecular-humanities-reef.trycloudflare.com/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
+      'https://employed-foods-separate-guns.trycloudflare.com/api'; //cambiar cada vez que se inicie cloudflared tunnel --url http...
 
   static String get gameUrl {
     return baseUrl.replaceAll(
@@ -16,10 +16,7 @@ class AuthService {
   } //Ruta de la página del juego
 
   static String get utbisGameUrl {
-    return baseUrl.replaceAll(
-      '/api',
-      '/Utbis_game_responsivo/index.html',
-    );
+    return baseUrl.replaceAll('/api', '/Utbis_game_responsivo/index.html');
   } //Ruta de la página del juego MathOcean
 
   //

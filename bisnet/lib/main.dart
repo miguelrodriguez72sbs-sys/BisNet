@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale _locale = const Locale('en'); // idioma por defecto
+  Locale _locale = const Locale('en');
 
   void setLocale(Locale locale) {
     setState(() => _locale = locale);
@@ -32,7 +32,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bisnet',
-      //Configuración de idiomas
       locale: _locale,
       supportedLocales: const [Locale('es'), Locale('en')],
       localizationsDelegates: const [
@@ -64,11 +63,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkSession() async {
     final token = await AuthService.getToken();
     await Future.delayed(const Duration(seconds: 2));
+
     if (!mounted) return;
 
     if (token != null) {
       try {
         final user = await AuthService.getProfile();
+
         if (user.containsKey('id')) {
           Navigator.pushReplacement(
             context,
@@ -76,21 +77,21 @@ class _SplashScreenState extends State<SplashScreen> {
           );
         } else {
           await AuthService.deleteToken();
+
           Navigator.pushReplacement(
             context,
-            //Si no hay sesión va al selector de idioma
             MaterialPageRoute(builder: (context) => const TraductorScreen()),
           );
         }
       } catch (e) {
         await AuthService.deleteToken();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const TraductorScreen()),
         );
       }
     } else {
-      //Primera vez → selector de idioma en vez de login directo
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const TraductorScreen()),
