@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../services/auth_service.dart';
 import '../L10n/app_localizations.dart';
+import '../widgets/game_embed.dart';
 
 class GamesScreen extends StatefulWidget {
   final bool isGuest;
@@ -41,7 +41,7 @@ class _GamesScreenState extends State<GamesScreen> {
   void _openGame(String url, String title) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => _GameWebViewScreen(url: url, title: title),
+        builder: (_) => GameEmbed(url: url, title: title),
       ),
     );
   }
@@ -116,48 +116,6 @@ class _GameCard extends StatelessWidget {
               const Icon(Icons.chevron_right, color: Colors.white),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GameWebViewScreen extends StatefulWidget {
-  final String url;
-  final String title;
-  const _GameWebViewScreen({required this.url, required this.title});
-
-  @override
-  State<_GameWebViewScreen> createState() => _GameWebViewScreenState();
-}
-
-class _GameWebViewScreenState extends State<_GameWebViewScreen> {
-  late final WebViewController _controller;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (_) => setState(() => _isLoading = false),
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F4),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (_isLoading) const Center(child: CircularProgressIndicator()),
-          ],
         ),
       ),
     );
